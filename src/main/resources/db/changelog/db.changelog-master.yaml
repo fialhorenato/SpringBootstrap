@@ -1,0 +1,56 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_table_users
+      author: renato
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: username
+                  type: varchar(20)
+                  constraints:
+                    - unique: true
+              - column:
+                  name: email
+                  type: varchar(50)
+                  constraints:
+                    - unique: true
+              - column:
+                  name: password
+                  type: varchar(120)
+
+  - changeSet:
+      id: create_table_roles
+      author: renato
+      changes:
+        - createTable:
+            tableName: roles
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_user_role
+                    references: users(id)
+              - column:
+                  name: role
+                  type: varchar(120)
+        - addUniqueConstraint:
+            columnNames: "user_id, role"
+            tableName: roles

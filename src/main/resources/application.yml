@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:db;DB_CLOSE_DELAY=-1
+    username: sa
+    password: sa
+    driver-class-name: org.h2.Driver
+
+jwt:
+  jwtSecret: 59fedfab-9fa7-4a33-9ea0-c76e7729009a
+  jwtExpirationMs: 86400000
