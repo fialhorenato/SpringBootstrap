@@ -53,7 +53,7 @@ class JwtUtils {
     }
 
     fun getUserNameFromJwtToken(token: String): String {
-        return JWSObject.parse(token).payload.toJSONObject()["subject"].toString()
+        return JWSObject.parse(token).payload.toJSONObject()["sub"].toString()
     }
 
     fun getPasswordFromJwtToken(token: String): String {

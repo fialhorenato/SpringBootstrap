@@ -17,7 +17,7 @@ data class UserResponseDTO(
     )
 
     constructor(userDetails : UserDetails) : this(
-        userDetails.myUsername ,
+        userDetails.username ,
         userDetails.email,
         userDetails.roles
     )
