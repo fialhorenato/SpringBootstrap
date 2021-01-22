@@ -22,6 +22,10 @@ class JwtUtils {
 
     companion object {
         const val ROLE_PREFIX = "ROLE_"
+        const val SUBJECT_CLAIM = "sub"
+        const val EMAIL_CLAIM = "email"
+        const val ROLES_CLAIM = "roles"
+        const val PASSWORD_CLAIM = "password"
     }
 
     private val logger: Logger = LoggerFactory.getLogger(JwtUtils::class.java)
@@ -35,9 +39,9 @@ class JwtUtils {
     fun generateJwtToken(authentication: Authentication): String {
         val userPrincipal = authentication.principal as UserDetails
         val claims = JWTClaimsSet.Builder()
-            .claim("email", userPrincipal.email)
-            .claim("roles", userPrincipal.roles)
-            .claim("password", userPrincipal.password)
+            .claim(EMAIL_CLAIM, userPrincipal.email)
+            .claim(ROLES_CLAIM, userPrincipal.roles)
+            .claim(PASSWORD_CLAIM, userPrincipal.password)
             .expirationTime(Date(Date().time + jwtExpirationMs))
             .issueTime(Date())
             .subject(userPrincipal.username)
@@ -53,23 +57,23 @@ class JwtUtils {
     }
 
     fun getUserNameFromJwtToken(token: String): String {
-        return JWSObject.parse(token).payload.toJSONObject()["sub"].toString()
+        return JWSObject.parse(token).payload.toJSONObject()[SUBJECT_CLAIM].toString()
     }
 
     fun getPasswordFromJwtToken(token: String): String {
-        return JWSObject.parse(token).payload.toJSONObject()["password"].toString()
+        return JWSObject.parse(token).payload.toJSONObject()[PASSWORD_CLAIM].toString()
     }
 
     fun getEmailFromJwtToken(token: String): String {
-        return JWSObject.parse(token).payload.toJSONObject()["email"].toString()
+        return JWSObject.parse(token).payload.toJSONObject()[EMAIL_CLAIM].toString()
     }
 
     fun getRolesFromJwtToken(token: String): List<String> {
-        var roles = JWSObject.parse(token).payload.toJSONObject()["roles"]
+        var roles = JWSObject.parse(token).payload.toJSONObject()[ROLES_CLAIM]
         return if (roles is List<*>) {
             roles as List<String>
         } else {
-            throw JwtException("There's no roles in the JWT Token")
+            throw JwtException("There are no roles in the JWT Token")
         }
     }
 
