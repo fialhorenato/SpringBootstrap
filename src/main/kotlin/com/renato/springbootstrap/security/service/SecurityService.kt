@@ -1,13 +1,13 @@
 package com.renato.springbootstrap.security.service
 
-import com.renato.springbootstrap.security.entity.RoleEntity
-import com.renato.springbootstrap.security.entity.UserEntity
-import com.renato.springbootstrap.security.repository.RoleRepository
-import com.renato.springbootstrap.security.repository.UserRepository
 import com.renato.springbootstrap.exception.NotFoundException
 import com.renato.springbootstrap.security.api.request.LoginRequestDTO
 import com.renato.springbootstrap.security.api.request.SignupRequestDTO
+import com.renato.springbootstrap.security.entity.RoleEntity
+import com.renato.springbootstrap.security.entity.UserEntity
 import com.renato.springbootstrap.security.exception.UserAlreadyExistsException
+import com.renato.springbootstrap.security.repository.RoleRepository
+import com.renato.springbootstrap.security.repository.UserRepository
 import com.renato.springbootstrap.security.utils.JwtUtils
 import com.renato.springbootstrap.security.utils.JwtUtils.Companion.ROLE_PREFIX
 import org.springframework.data.domain.Page
@@ -23,8 +23,6 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import java.util.Collections.emptyList
 import java.util.Objects.nonNull
-import javax.transaction.Transactional
-import kotlin.streams.toList
 
 @Service
 class SecurityService(
@@ -34,6 +32,32 @@ class SecurityService(
     private val encoder: PasswordEncoder,
     private val roleRepository: RoleRepository
 ) : UserDetailsService {
+
+    override fun loadUserByUsername(username: String): UserDetails {
+        val user = userRepository.findByUsername(username)
+        return user?.let { toUserDetails(it) } ?: throw UsernameNotFoundException("Username $username not found")
+    }
+
+    fun addRole(username: String, role: String) {
+        roleRepository.save(RoleEntity(role = role, user = getUser(username)))
+    }
+
+    fun removeRole(userId: String, role: String) {
+        roleRepository.deleteByUserAndRole(role = role, user = getUser(userId))
+    }
+
+    fun getUser(userId: Long): UserEntity {
+        return userRepository.findById(userId).orElseThrow(NotFoundException(String.format("User %d cannot be found", userId)))
+    }
+
+    fun getUser(username: String): UserEntity {
+        return userRepository.findByUsername(username) ?: throw NotFoundException(String.format("User %s cannot be found", username))
+    }
+
+    fun getUser(pageable : Pageable): Page<UserEntity> {
+        return userRepository.findAll(pageable)
+    }
+
     fun authenticate(loginRequestDTO: LoginRequestDTO): String {
         // Try to authenticate the user with username and password
         val authentication = authenticationManager.authenticate(
@@ -62,7 +86,10 @@ class SecurityService(
 
         val user = UserEntity(id = null, username = signupRequestDTO.username, email = signupRequestDTO.email, password = encoder.encode(signupRequestDTO.password), roles = emptyList())
 
-        user.roles = listOf(toRole(userEntity =  user), toRole("ADMIN", user))
+        // Adding the USER role
+        user.roles = listOf(
+            toRole(userEntity =  user)
+        )
 
         return userRepository.save(user)
     }
@@ -73,12 +100,6 @@ class SecurityService(
 
     private fun userExists(username: String, email: String): Boolean {
         return userRepository.existsByUsernameOrEmail(username, email)
-    }
-
-    @Transactional
-    override fun loadUserByUsername(username: String): UserDetails {
-        val user = userRepository.findByUsername(username)
-        return user?.let { toUserDetails(it) } ?: throw UsernameNotFoundException(String.format("Username %s not found", username))
     }
 
     private fun toUserDetails(userEntity: UserEntity): UserDetails {
@@ -99,25 +120,5 @@ class SecurityService(
             authorities,
             roles
         )
-    }
-
-    fun addRole(username: String, role: String) {
-        roleRepository.save(RoleEntity(role = role, user = getUser(username)))
-    }
-
-    fun removeRole(userId: String, role: String) {
-        roleRepository.deleteByUserAndRole(role = role, user = getUser(userId))
-    }
-
-    fun getUser(userId: Long): UserEntity {
-        return userRepository.findById(userId).orElseThrow(NotFoundException(String.format("User %d cannot be found", userId)))
-    }
-
-    fun getUser(username: String): UserEntity {
-        return userRepository.findByUsername(username) ?: throw NotFoundException(String.format("User %s cannot be found", username))
-    }
-
-    fun getUser(pageable : Pageable): Page<UserEntity> {
-        return userRepository.findAll(pageable)
     }
 }

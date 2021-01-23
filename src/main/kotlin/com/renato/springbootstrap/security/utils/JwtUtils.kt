@@ -37,6 +37,17 @@ class JwtUtils {
     var jwtExpirationMs = 86400000
 
     fun generateJwtToken(authentication: Authentication): String {
+        val payload = Payload(getClaims(authentication).toJSONObject())
+        val header = JWSHeader(HS256)
+        val signer = MACSigner(jwtSecret)
+        val jwsObject = JWSObject(header, payload)
+
+        // Sign object with signature
+        jwsObject.sign(signer)
+        return jwsObject.serialize()
+    }
+
+    private fun getClaims(authentication: Authentication): JWTClaimsSet {
         val userPrincipal = authentication.principal as UserDetails
         val claims = JWTClaimsSet.Builder()
             .claim(EMAIL_CLAIM, userPrincipal.email)
@@ -46,14 +57,7 @@ class JwtUtils {
             .issueTime(Date())
             .subject(userPrincipal.username)
             .build()
-        val payload = Payload(claims.toJSONObject())
-        val header = JWSHeader(HS256)
-        val signer = MACSigner(jwtSecret)
-        val jwsObject = JWSObject(header, payload)
-
-        // Sign object with signature
-        jwsObject.sign(signer)
-        return jwsObject.serialize()
+        return claims
     }
 
     fun getUserNameFromJwtToken(token: String): String {
