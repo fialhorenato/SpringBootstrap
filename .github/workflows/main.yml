@@ -20,4 +20,4 @@ jobs:
       - name: Tests with Maven
         run: gradle test
       - name: Build
-          run: gradle clean test
+        run: gradle clean test
