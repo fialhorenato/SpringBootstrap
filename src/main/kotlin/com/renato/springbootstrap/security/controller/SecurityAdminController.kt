@@ -31,18 +31,18 @@ class SecurityAdminController(var securityService: SecurityService) {
 
     @GetMapping("/user")
     fun getUsers(pageable: Pageable): Page<UserResponseDTO> {
-        val page = securityService.getUser(pageable)
+        val page = securityService.getUsers(pageable)
         return PageImpl(page.get().map { r -> UserResponseDTO(r) }.toList(), page.pageable, page.totalElements)
     }
 
     @GetMapping("/user/username/{username}")
     fun getUserByUsername(@PathVariable(value = "username") username : String): UserResponseDTO {
-        return UserResponseDTO(securityService.getUser(username = username))
+        return UserResponseDTO(securityService.getUserByUsername(username = username))
     }
 
     @GetMapping("/user/user_id/{user_id}")
     fun getUserByUserId(@PathVariable(value = "user_id") userId : Long): UserResponseDTO {
-        return UserResponseDTO(securityService.getUser(userId = userId))
+        return UserResponseDTO(securityService.getUserByUserId(userId = userId))
     }
 
 }

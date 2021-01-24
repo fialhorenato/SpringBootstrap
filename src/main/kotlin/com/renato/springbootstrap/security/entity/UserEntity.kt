@@ -19,4 +19,8 @@ data class UserEntity (
 
         @OneToMany(cascade = [ALL], mappedBy = "user")
         var roles : List<RoleEntity>
-)
+) {
+        override fun toString(): String {
+                return "UserEntity(id=$id, username='$username', email='$email', password='$password', roles=$roles)"
+        }
+}

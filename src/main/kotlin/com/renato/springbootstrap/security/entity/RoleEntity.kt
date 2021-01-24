@@ -17,4 +17,8 @@ data class RoleEntity(
     var user: UserEntity?,
 
     var role: String
-)
+) {
+    override fun toString(): String {
+        return "RoleEntity(id=$id, user=${user?.username}, role='$role')"
+    }
+}

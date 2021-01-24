@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.*
 class SecurityController(val securityService: SecurityService) {
     @PostMapping(value = ["/signup"])
     fun signup(@RequestBody signupRequestDTO: SignupRequestDTO): ResponseEntity<UserResponseDTO> {
-        val user = securityService.createUser(signupRequestDTO)
+        val user = securityService.createUser(signupRequestDTO.username, signupRequestDTO.password, signupRequestDTO.email)
         val userResponseDTO = UserResponseDTO(user)
         return ResponseEntity(userResponseDTO, HttpStatus.CREATED)
     }
 
     @PostMapping(value = ["/login"])
     fun login(@RequestBody loginRequestDTO: LoginRequestDTO): String {
-        return securityService.authenticate(loginRequestDTO)
+        return securityService.authenticate(loginRequestDTO.username, loginRequestDTO.password)
     }
 
     @GetMapping(value = ["/me"])
