@@ -4,6 +4,9 @@ spring:
     username: sa
     password: sa
     driver-class-name: org.h2.Driver
+springdoc:
+  api-docs:
+    path: /api-docs
 
 jwt:
   jwtSecret: 59fedfab-9fa7-4a33-9ea0-c76e7729009a
