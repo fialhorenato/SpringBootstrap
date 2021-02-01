@@ -1,4 +1,4 @@
-package com.renato.springbootstrap.security
+package com.renato.springbootstrap.security.service
 
 import com.renato.springbootstrap.exception.NotFoundException
 import com.renato.springbootstrap.factory.UserFactory
@@ -7,8 +7,6 @@ import com.renato.springbootstrap.security.entity.UserEntity
 import com.renato.springbootstrap.security.exception.UserAlreadyExistsException
 import com.renato.springbootstrap.security.repository.RoleRepository
 import com.renato.springbootstrap.security.repository.UserRepository
-import com.renato.springbootstrap.security.service.SecurityServiceImpl
-import com.renato.springbootstrap.security.service.UserDetails
 import com.renato.springbootstrap.security.utils.JwtUtils
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.DisplayName
@@ -20,14 +18,12 @@ import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
 import java.util.*

@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository
 @Repository
 interface RoleRepository : JpaRepository<RoleEntity, Long> {
     fun deleteByUserAndRole(user: UserEntity, role : String)
+
+    fun findAllByUser_Username(username : String) : List<RoleEntity>
 }
