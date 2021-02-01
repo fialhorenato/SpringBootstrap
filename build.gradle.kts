@@ -13,6 +13,7 @@ version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 var nimbusJose4jVersion = "9.4.1"
+var springDocVersion = "1.5.3"
 
 repositories {
 	mavenCentral()
@@ -28,6 +29,7 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	implementation("com.nimbusds:nimbus-jose-jwt:$nimbusJose4jVersion")
+	implementation ("org.springdoc:springdoc-openapi-ui:$springDocVersion")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	runtimeOnly("com.h2database:h2")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
