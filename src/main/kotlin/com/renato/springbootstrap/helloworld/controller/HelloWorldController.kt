@@ -8,16 +8,15 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("hello-world")
 class HelloWorldController {
-    @GetMapping
-    @RequestMapping("/secured")
+
+    @GetMapping("/secure")
     @Secured("ROLE_ADMIN")
     fun helloWorldSecured(): String {
-        return "Hello World Secured"
+        return "Hello World with Security"
     }
 
-    @GetMapping
-    @RequestMapping("/insecured")
+    @GetMapping("/insecure")
     fun helloWorldInsecured(): String {
-        return "Hello World Insecured"
+        return "Hello World Insecure"
     }
 }
