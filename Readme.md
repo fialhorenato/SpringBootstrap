@@ -1,9 +1,16 @@
-# Spring Boot(strap)
+# Spring Boot(strap) with Kotlin
 
-This is a basic project containing a basic Backend application using Spring Boot.
+This is a basic project using Spring Boot, Kotlin and Gradle.
 
-- Spring Boot
+Those are the Spring modules used:
+
 - Spring Security
 - Spring Data JPA
-- Flyway (Migration)
-- H2
+
+External libraries:
+
+- Flyway
+- H2 (For local development)
+- Springdoc UI
+
+It is ready to be deployed using any Docker orchestrator technology (EKS, ECS, GKE, K8s)
