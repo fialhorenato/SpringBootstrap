@@ -1,6 +1,9 @@
 package com.renato.springbootstrap.security.entity
 
 import com.renato.springbootstrap.security.entity.RoleEntity
+import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.annotation.LastModifiedDate
+import java.time.Instant
 import javax.persistence.*
 import javax.persistence.CascadeType.ALL
 import javax.persistence.FetchType.EAGER
@@ -19,7 +22,15 @@ data class UserEntity (
         var password : String,
 
         @OneToMany(cascade = [ALL], mappedBy = "user")
-        var roles : List<RoleEntity>
+        var roles : List<RoleEntity>,
+
+        @CreatedDate
+        @Column(name = "created_at")
+        var createdAt : Instant? = Instant.now(),
+
+        @LastModifiedDate
+        @Column(name = "updated_at")
+        var updatedAt : Instant? = Instant.now()
 ) {
         override fun toString(): String {
                 return "UserEntity(id=$id, username='$username', email='$email', password='$password', roles=$roles)"
