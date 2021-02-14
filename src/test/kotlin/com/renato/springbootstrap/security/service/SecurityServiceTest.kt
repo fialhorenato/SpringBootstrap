@@ -26,6 +26,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
+import java.time.Instant
+import java.time.Instant.now
 import java.util.*
 
 @ExtendWith(MockitoExtension::class)
@@ -68,7 +70,7 @@ class SecurityServiceTest {
         val user = UserFactory.generateUser()
         Mockito.`when`(userRepository.findByUsername("username")).thenReturn(user)
         securityService.addRole("username", "ADMIN")
-        Mockito.verify(roleRepository).save(RoleEntity(user = user, role = "ADMIN"))
+        Mockito.verify(roleRepository).save(Mockito.any(RoleEntity::class.java))
     }
 
     @Test
@@ -137,6 +139,24 @@ class SecurityServiceTest {
         val authentication = UsernamePasswordAuthenticationToken(principal, "password", emptyList())
         SecurityContextHolder.getContext().authentication = authentication
         assertDoesNotThrow { securityService.me() }
+    }
+
+    @Test
+    @DisplayName("Update sanity")
+    fun updateSanity() {
+        // Given
+        val user = UserFactory.generateUser()
+        val principal = UserDetails("email", "username", "password", emptyList(), emptyList())
+        val authentication = UsernamePasswordAuthenticationToken(principal, "password", emptyList())
+
+        // When
+        Mockito.`when`(userRepository.findByUsername("username")).thenReturn(user)
+        Mockito.`when`(encoder.encode(user.password)).thenReturn("passwordEncoded")
+        Mockito.`when`(userRepository.save(Mockito.any(UserEntity::class.java))).thenReturn(user)
+        SecurityContextHolder.getContext().authentication = authentication
+
+        // Then
+        assertDoesNotThrow { securityService.updateUser("email", "password") }
     }
 
     @Test

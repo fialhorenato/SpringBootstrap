@@ -14,6 +14,7 @@ java.sourceCompatibility = JavaVersion.VERSION_11
 
 var nimbusJose4jVersion = "9.4.1"
 var springDocVersion = "1.5.3"
+var postgreSQLVersion = "42.2.18"
 
 repositories {
 	mavenCentral()
@@ -30,6 +31,7 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	implementation("com.nimbusds:nimbus-jose-jwt:$nimbusJose4jVersion")
 	implementation ("org.springdoc:springdoc-openapi-ui:$springDocVersion")
+	implementation ("org.postgresql:postgresql:$postgreSQLVersion")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	runtimeOnly("com.h2database:h2")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")

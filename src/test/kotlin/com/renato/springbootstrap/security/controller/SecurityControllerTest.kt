@@ -3,6 +3,7 @@ package com.renato.springbootstrap.security.controller
 import com.renato.springbootstrap.factory.UserFactory
 import com.renato.springbootstrap.security.api.request.LoginRequestDTO
 import com.renato.springbootstrap.security.api.request.SignupRequestDTO
+import com.renato.springbootstrap.security.api.request.UpdateUserRequestDTO
 import com.renato.springbootstrap.security.service.SecurityService
 import com.renato.springbootstrap.security.service.UserDetails
 import org.junit.jupiter.api.BeforeAll
@@ -33,6 +34,13 @@ class SecurityControllerTest {
         `when`(securityService.createUser("username", "password", "email")).thenReturn(UserFactory.generateUser())
         securityController.signup(signupRequestDTO)
         verify(securityService).createUser("username", "password", "email")
+    }
+
+    @Test
+    fun updateMustDelegateToService() {
+        val updateUserRequestDTO = UpdateUserRequestDTO("email", "password")
+        `when`(securityService.updateUser("email", "password")).thenReturn(UserFactory.generateUser())
+        securityController.update(updateUserRequestDTO)
     }
 
     @Test

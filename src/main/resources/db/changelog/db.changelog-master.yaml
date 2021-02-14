@@ -26,7 +26,12 @@ databaseChangeLog:
               - column:
                   name: password
                   type: varchar(120)
-
+              - column:
+                  name: created_at
+                  type: timestamp
+              - column:
+                  name: updated_at
+                  type: timestamp
   - changeSet:
       id: create_table_roles
       author: renato
@@ -51,6 +56,12 @@ databaseChangeLog:
               - column:
                   name: role
                   type: varchar(120)
+              - column:
+                  name: created_at
+                  type: timestamp
+              - column:
+                  name: updated_at
+                  type: timestamp
         - addUniqueConstraint:
             columnNames: "user_id, role"
             tableName: roles

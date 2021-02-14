@@ -21,4 +21,6 @@ interface SecurityService : UserDetailsService {
     fun me(): UserDetails
 
     fun createUser(username: String, password: String, email: String): UserEntity
+
+    fun updateUser(email: String, password: String) : UserEntity
 }

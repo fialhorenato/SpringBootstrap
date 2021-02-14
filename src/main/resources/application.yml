@@ -11,3 +11,15 @@ springdoc:
 jwt:
   jwtSecret: 59fedfab-9fa7-4a33-9ea0-c76e7729009a
   jwtExpirationMs: 86400000
+
+---
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/springbootstrap
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  config:
+    activate:
+      on-profile: local-postgresql

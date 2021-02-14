@@ -1,5 +1,6 @@
 package com.renato.springbootstrap.security.entity
 
+import java.time.Instant
 import javax.persistence.*
 import javax.persistence.FetchType.LAZY
 import javax.persistence.GenerationType.IDENTITY
@@ -16,7 +17,13 @@ data class RoleEntity(
     @ManyToOne(fetch = LAZY)
     var user: UserEntity?,
 
-    var role: String
+    var role: String,
+
+    @Column(name = "created_at")
+    var createdAt : Instant? = Instant.now(),
+
+    @Column(name = "updated_at")
+    var updatedAt : Instant? = Instant.now()
 ) {
     override fun toString(): String {
         return "RoleEntity(id=$id, user=${user?.username}, role='$role')"

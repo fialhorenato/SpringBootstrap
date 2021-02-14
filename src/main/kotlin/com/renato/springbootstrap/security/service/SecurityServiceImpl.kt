@@ -18,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import java.lang.IllegalArgumentException
 import java.util.Collections.emptyList
 import java.util.Objects.nonNull
 
@@ -89,6 +90,18 @@ class SecurityServiceImpl(
         )
 
         return userRepository.save(user)
+    }
+
+    override fun updateUser(email: String, password: String): UserEntity {
+        val authentication = SecurityContextHolder.getContext().authentication
+        if (authentication.principal is UserDetails) {
+            val authDetails = authentication.principal as UserDetails
+            var myUser = getUserByUsername(username = authDetails.myUsername)
+            myUser.email = email
+            myUser.password = encoder.encode(password)
+            return userRepository.save(myUser)
+        }
+        throw IllegalArgumentException("Cannot update user details")
     }
 
     private fun toRole(role: String = "USER", userEntity: UserEntity): RoleEntity {
