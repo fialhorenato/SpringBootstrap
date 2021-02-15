@@ -1,5 +1,6 @@
 package com.renato.springbootstrap.security.controller
 
+import com.renato.springbootstrap.security.api.request.UpdateUserRequestDTO
 import com.renato.springbootstrap.security.api.response.UserResponseDTO
 import com.renato.springbootstrap.security.service.SecurityService
 import org.springframework.data.domain.Page
@@ -43,6 +44,12 @@ class SecurityAdminController(var securityService: SecurityService) {
     @GetMapping("/user/user_id/{user_id}")
     fun getUserByUserId(@PathVariable(value = "user_id") userId : Long): UserResponseDTO {
         return UserResponseDTO(securityService.getUserByUserId(userId = userId))
+    }
+
+    @PatchMapping(value = ["/update"])
+    fun update(@RequestBody updateUserRequestDTO: UpdateUserRequestDTO) : String {
+        val user = securityService.updateUser(email = updateUserRequestDTO.email, password = updateUserRequestDTO.password)
+        return securityService.authenticate(username = user.username, password = updateUserRequestDTO.password)
     }
 
 }

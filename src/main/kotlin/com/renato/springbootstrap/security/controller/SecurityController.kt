@@ -19,12 +19,6 @@ class SecurityController(val securityService: SecurityService) {
         return ResponseEntity(userResponseDTO, HttpStatus.CREATED)
     }
 
-    @PatchMapping(value = ["/update"])
-    fun update(@RequestBody updateUserRequestDTO: UpdateUserRequestDTO) : String {
-        val user = securityService.updateUser(email = updateUserRequestDTO.email, password = updateUserRequestDTO.password)
-        return securityService.authenticate(username = user.username, password = updateUserRequestDTO.password)
-    }
-
     @PostMapping(value = ["/login"])
     fun login(@RequestBody loginRequestDTO: LoginRequestDTO): String {
         return securityService.authenticate(loginRequestDTO.username, loginRequestDTO.password)
