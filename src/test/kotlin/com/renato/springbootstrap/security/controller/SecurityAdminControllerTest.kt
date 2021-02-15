@@ -4,6 +4,7 @@ import com.renato.springbootstrap.factory.UserFactory
 import com.renato.springbootstrap.factory.UserFactory.Companion.generateUser
 import com.renato.springbootstrap.security.api.request.LoginRequestDTO
 import com.renato.springbootstrap.security.api.request.SignupRequestDTO
+import com.renato.springbootstrap.security.api.request.UpdateUserRequestDTO
 import com.renato.springbootstrap.security.service.SecurityService
 import com.renato.springbootstrap.security.service.UserDetails
 import org.junit.jupiter.api.BeforeAll
@@ -63,5 +64,12 @@ class SecurityAdminControllerTest {
         `when`(securityService.getUsers(unpaged())).thenReturn(PageImpl(listOf(generateUser())))
         securityAdminController.getUsers(unpaged())
         verify(securityService).getUsers(unpaged())
+    }
+
+    @Test
+    fun updateMustDelegateToService() {
+        val updateUserRequestDTO = UpdateUserRequestDTO("email", "password")
+        `when`(securityService.updateUser("email", "password")).thenReturn(generateUser())
+        securityAdminController.update(updateUserRequestDTO)
     }
 }

@@ -37,13 +37,6 @@ class SecurityControllerTest {
     }
 
     @Test
-    fun updateMustDelegateToService() {
-        val updateUserRequestDTO = UpdateUserRequestDTO("email", "password")
-        `when`(securityService.updateUser("email", "password")).thenReturn(UserFactory.generateUser())
-        securityController.update(updateUserRequestDTO)
-    }
-
-    @Test
     fun loginMustDelegateToService() {
         val loginRequestDTO = LoginRequestDTO("username", "password")
         securityController.login(loginRequestDTO)
