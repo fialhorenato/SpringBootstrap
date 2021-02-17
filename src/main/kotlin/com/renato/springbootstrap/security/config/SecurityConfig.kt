@@ -13,7 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(securedEnabled = true, )
+@EnableGlobalMethodSecurity(securedEnabled = true)
 class SecurityConfig(private val jwtAuthorizationFilter: JwtAuthorizationFilter) : WebSecurityConfigurerAdapter() {
 
     override fun configure(http: HttpSecurity) {

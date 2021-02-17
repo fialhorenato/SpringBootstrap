@@ -5,7 +5,6 @@ import com.nimbusds.jose.JWSAlgorithm.HS256
 import com.nimbusds.jose.crypto.MACSigner
 import com.nimbusds.jose.crypto.MACVerifier
 import com.nimbusds.jwt.JWTClaimsSet
-import com.renato.springbootstrap.security.exception.JwtException
 import com.renato.springbootstrap.security.service.UserDetails
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -49,7 +48,7 @@ class JwtUtils {
 
     private fun getClaims(authentication: Authentication): JWTClaimsSet {
         val userPrincipal = authentication.principal as UserDetails
-        val claims = JWTClaimsSet.Builder()
+        return JWTClaimsSet.Builder()
             .claim(EMAIL_CLAIM, userPrincipal.email)
             .claim(ROLES_CLAIM, userPrincipal.roles)
             .claim(PASSWORD_CLAIM, userPrincipal.password)
@@ -57,7 +56,6 @@ class JwtUtils {
             .issueTime(Date())
             .subject(userPrincipal.username)
             .build()
-        return claims
     }
 
     fun getUserNameFromJwtToken(token: String): String {
@@ -73,12 +71,8 @@ class JwtUtils {
     }
 
     fun getRolesFromJwtToken(token: String): List<String> {
-        var roles = JWSObject.parse(token).payload.toJSONObject()[ROLES_CLAIM]
-        return if (roles is List<*>) {
-            roles as List<String>
-        } else {
-            throw JwtException("There are no roles in the JWT Token")
-        }
+        val roles = JWSObject.parse(token).payload.toJSONObject()[ROLES_CLAIM]  as List<*>
+        return roles.filterIsInstance<String>().map {it}
     }
 
     fun getAuthoritiesFromJwtToken(token: String): List<SimpleGrantedAuthority> {
