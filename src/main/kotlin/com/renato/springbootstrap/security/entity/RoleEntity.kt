@@ -15,7 +15,7 @@ data class RoleEntity(
     var id: Long? = null,
 
     @ManyToOne(fetch = LAZY)
-    var user: UserEntity?,
+    var user: UserEntity,
 
     var role: String,
 
@@ -26,6 +26,6 @@ data class RoleEntity(
     var updatedAt : Instant? = Instant.now()
 ) {
     override fun toString(): String {
-        return "RoleEntity(id=$id, user=${user?.username}, role='$role')"
+        return "RoleEntity(id=$id, user=${user.username}, role='$role')"
     }
 }

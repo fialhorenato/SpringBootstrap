@@ -1,12 +1,10 @@
 package com.renato.springbootstrap.security.entity
 
-import com.renato.springbootstrap.security.entity.RoleEntity
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import java.time.Instant
 import javax.persistence.*
 import javax.persistence.CascadeType.ALL
-import javax.persistence.FetchType.EAGER
 
 @Entity
 @Table(name = "users")

@@ -1,5 +1,6 @@
 package com.renato.springbootstrap.security.service
 
+import com.renato.springbootstrap.security.entity.RoleEntity
 import com.renato.springbootstrap.security.entity.UserEntity
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -23,4 +24,6 @@ interface SecurityService : UserDetailsService {
     fun createUser(username: String, password: String, email: String): UserEntity
 
     fun updateUser(email: String, password: String) : UserEntity
+
+    fun findAllRolesByUsername(username: String) : List<RoleEntity>
 }

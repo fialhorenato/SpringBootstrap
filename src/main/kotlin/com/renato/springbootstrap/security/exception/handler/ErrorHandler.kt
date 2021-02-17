@@ -2,7 +2,6 @@ package com.renato.springbootstrap.security.exception.handler
 
 import com.renato.springbootstrap.api.response.GeneralFailureResponse
 import com.renato.springbootstrap.security.exception.UserAlreadyExistsException
-import com.renato.springbootstrap.security.utils.JwtUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -47,6 +46,6 @@ class ErrorHandler {
     }
 
     private fun generateErrorResponse(message : String) : GeneralFailureResponse {
-        return GeneralFailureResponse(listOf(message));
+        return GeneralFailureResponse(listOf(message))
     }
 }

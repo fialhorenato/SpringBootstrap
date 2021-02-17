@@ -3,7 +3,7 @@ package com.renato.springbootstrap.security.service
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
-class UserDetails(var email: String, var myUsername: String, var myPassword: String, var myAuthorities: List<SimpleGrantedAuthority>, var roles : List<String>) : UserDetails {
+class UserDetails(var email: String, var myUsername: String, private var myPassword: String, private var myAuthorities: List<SimpleGrantedAuthority>, var roles : List<String>) : UserDetails {
 
     override fun getAuthorities(): List<SimpleGrantedAuthority> {
         return myAuthorities

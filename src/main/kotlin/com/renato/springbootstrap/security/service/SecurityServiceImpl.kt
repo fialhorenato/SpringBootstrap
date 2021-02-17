@@ -18,7 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
-import java.lang.IllegalArgumentException
+import org.springframework.transaction.annotation.Transactional
 import java.util.Collections.emptyList
 import java.util.Objects.nonNull
 
@@ -31,6 +31,7 @@ class SecurityServiceImpl(
     private val roleRepository: RoleRepository
 ) : SecurityService {
 
+    @Transactional(readOnly = true)
     override fun loadUserByUsername(username: String): UserDetails {
         val user = userRepository.findByUsername(username)
         return user?.let { toUserDetails(it) } ?: throw UsernameNotFoundException("Username $username not found")
@@ -44,18 +45,22 @@ class SecurityServiceImpl(
         roleRepository.deleteByUserAndRole(role = role, user = getUserByUsername(username))
     }
 
+    @Transactional(readOnly = true)
     override fun getUserByUserId(userId: Long): UserEntity {
         return userRepository.findById(userId).orElseThrow(NotFoundException(String.format("User %d cannot be found", userId)))
     }
 
+    @Transactional(readOnly = true)
     override fun getUserByUsername(username: String): UserEntity {
         return userRepository.findByUsername(username) ?: throw NotFoundException(String.format("User %s cannot be found", username))
     }
 
+    @Transactional(readOnly = true)
     override fun getUsers(pageable : Pageable): Page<UserEntity> {
         return userRepository.findAll(pageable)
     }
 
+    @Transactional(readOnly = true)
     override fun authenticate(username : String, password : String): String {
         // Try to authenticate the user with username and password
         val authentication = authenticationManager.authenticate(
@@ -96,12 +101,17 @@ class SecurityServiceImpl(
         val authentication = SecurityContextHolder.getContext().authentication
         if (authentication.principal is UserDetails) {
             val authDetails = authentication.principal as UserDetails
-            var myUser = getUserByUsername(username = authDetails.myUsername)
+            val myUser = getUserByUsername(username = authDetails.myUsername)
             myUser.email = email
             myUser.password = encoder.encode(password)
             return userRepository.save(myUser)
         }
         throw IllegalArgumentException("Cannot update user details")
+    }
+
+    @Transactional(readOnly = true)
+    override fun findAllRolesByUsername(username: String): List<RoleEntity> {
+        return roleRepository.findAllByUser_Username(username)
     }
 
     private fun toRole(role: String = "USER", userEntity: UserEntity): RoleEntity {

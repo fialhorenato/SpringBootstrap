@@ -2,7 +2,6 @@ package com.renato.springbootstrap.security.controller
 
 import com.renato.springbootstrap.security.api.request.LoginRequestDTO
 import com.renato.springbootstrap.security.api.request.SignupRequestDTO
-import com.renato.springbootstrap.security.api.request.UpdateUserRequestDTO
 import com.renato.springbootstrap.security.api.response.UserResponseDTO
 import com.renato.springbootstrap.security.service.SecurityService
 import org.springframework.http.HttpStatus
