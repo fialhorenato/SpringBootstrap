@@ -1,7 +1,10 @@
 package com.renato.springbootstrap.security.utils
 
-import com.nimbusds.jose.*
+import com.nimbusds.jose.JOSEException
 import com.nimbusds.jose.JWSAlgorithm.HS256
+import com.nimbusds.jose.JWSHeader
+import com.nimbusds.jose.JWSObject
+import com.nimbusds.jose.Payload
 import com.nimbusds.jose.crypto.MACSigner
 import com.nimbusds.jose.crypto.MACVerifier
 import com.nimbusds.jwt.JWTClaimsSet
@@ -12,7 +15,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.stereotype.Component
-import java.lang.IllegalStateException
 import java.util.*
 import kotlin.streams.toList
 
