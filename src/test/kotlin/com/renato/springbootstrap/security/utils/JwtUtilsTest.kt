@@ -1,6 +1,5 @@
 package com.renato.springbootstrap.security.utils
 
-import com.nimbusds.jose.JOSEException
 import com.renato.springbootstrap.security.service.UserDetails
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -8,7 +7,6 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
-import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import java.text.ParseException
