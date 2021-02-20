@@ -6,6 +6,7 @@ plugins {
 	kotlin("jvm") version "1.4.21"
 	kotlin("plugin.spring") version "1.4.21"
 	kotlin("plugin.jpa") version "1.4.21"
+	jacoco
 }
 
 group = "com.renato"
@@ -18,6 +19,15 @@ var postgreSQLVersion = "42.2.18"
 
 repositories {
 	mavenCentral()
+}
+
+tasks.jacocoTestReport {
+	reports {
+		xml.isEnabled = true
+		csv.isEnabled = true
+		html.isEnabled = true
+		html.destination = file("$buildDir/reports/coverage")
+	}
 }
 
 dependencies {
