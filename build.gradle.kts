@@ -30,11 +30,22 @@ tasks.jacocoTestReport {
 	}
 }
 
+configurations {
+	implementation.configure {
+		exclude(module = "spring-boot-starter-tomcat")
+		exclude("org.apache.tomcat")
+	}
+}
+
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-security")
-	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.boot:spring-boot-starter-web") {
+		exclude(module = "spring-boot-starter-tomcat")
+		exclude("org.apache.tomcat")
+	}
+	implementation("org.springframework.boot:spring-boot-starter-undertow")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.liquibase:liquibase-core")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
