@@ -7,10 +7,26 @@ spring:
 springdoc:
   api-docs:
     path: /api-docs
+management:
+  server:
+    port: 8081
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+  endpoint:
+    metrics:
+      enabled: false
+    prometheus:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'
 
 jwt:
-  jwtSecret: 59fedfab-9fa7-4a33-9ea0-c76e7729009a
-  jwtExpirationMs: 86400000
+  jwt-secret: 59fedfab-9fa7-4a33-9ea0-c76e7729009a
+  jwt-expiration-ms: 86400000
 
 ---
 

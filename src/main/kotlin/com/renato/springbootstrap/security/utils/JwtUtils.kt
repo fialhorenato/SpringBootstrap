@@ -31,10 +31,10 @@ class JwtUtils {
 
     private val logger: Logger = LoggerFactory.getLogger(JwtUtils::class.java)
 
-    @Value("\${jwt.jwtSecret}")
+    @Value("\${jwt.jwt-secret}")
     lateinit var jwtSecret: String
 
-    @Value("\${jwt.jwtExpirationMs}")
+    @Value("\${jwt.jwt-expiration-ms}")
     var jwtExpirationMs = 86400000
 
     fun generateJwtToken(authentication: Authentication): String {

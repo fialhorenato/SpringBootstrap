@@ -45,6 +45,7 @@ dependencies {
 		exclude(module = "spring-boot-starter-tomcat")
 		exclude("org.apache.tomcat")
 	}
+	implementation("io.micrometer:micrometer-registry-prometheus")
 	implementation("org.springframework.boot:spring-boot-starter-undertow")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.liquibase:liquibase-core")

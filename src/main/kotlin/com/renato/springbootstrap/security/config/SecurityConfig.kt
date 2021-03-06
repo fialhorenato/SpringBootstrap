@@ -1,6 +1,8 @@
 package com.renato.springbootstrap.security.config
 
 import com.renato.springbootstrap.security.filter.JwtAuthorizationFilter
+import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest
+import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest.toAnyEndpoint
 import org.springframework.context.annotation.Bean
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
@@ -23,6 +25,7 @@ class SecurityConfig(private val jwtAuthorizationFilter: JwtAuthorizationFilter)
             .sessionManagement().sessionCreationPolicy(STATELESS).and()
             .authorizeRequests()
             .antMatchers("/security/**").permitAll()
+            .requestMatchers(toAnyEndpoint()).permitAll()
             .antMatchers("/hello-world/insecure").permitAll()
             .antMatchers("/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
             .anyRequest().authenticated()
