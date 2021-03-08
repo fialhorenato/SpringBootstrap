@@ -18,3 +18,13 @@ External libraries:
 - Springdoc UI
 
 It is ready to be deployed using any Docker orchestrator technology (EKS, ECS, GKE, K8s)
+
+## Github Actions
+
+We currently use Github's docker registry, codecov and Snyk.
+
+In order to work those, you must generate secrets for them and put in your repository secrets:
+
+- CODECOV_TOKEN
+- SNYK_TOKEN
+- CR_PAT

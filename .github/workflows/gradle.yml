@@ -10,6 +10,17 @@ on:
     branches: [ main ]
 
 jobs:
+  snyk-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+      - name: Snyk Scan
+        uses: snyk/actions/gradle@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          command: monitor
   build:
     runs-on: ubuntu-latest
     steps:
