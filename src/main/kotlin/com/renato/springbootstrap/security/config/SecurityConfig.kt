@@ -28,7 +28,7 @@ class SecurityConfig(private val jwtAuthorizationFilter: JwtAuthorizationFilter)
             .requestMatchers(toAnyEndpoint()).permitAll()
             .antMatchers("/hello-world/insecure").permitAll()
             .antMatchers("/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-            .anyRequest().authenticated()
+            .anyRequest().permitAll()
             .and()
             .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter::class.java)
     }

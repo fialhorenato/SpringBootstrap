@@ -16,6 +16,7 @@ java.sourceCompatibility = JavaVersion.VERSION_11
 var nimbusJose4jVersion = "9.7"
 var springDocVersion = "1.5.6"
 var postgreSQLVersion = "42.2.19"
+var togglzVersion = "2.9.6"
 
 repositories {
 	mavenCentral()
@@ -54,6 +55,10 @@ dependencies {
 	implementation("com.nimbusds:nimbus-jose-jwt:$nimbusJose4jVersion")
 	implementation ("org.springdoc:springdoc-openapi-ui:$springDocVersion")
 	implementation ("org.postgresql:postgresql:$postgreSQLVersion")
+	//implementation("org.togglz:togglz-spring-boot-starter:$togglzVersion")
+	implementation("org.togglz:togglz-console:$togglzVersion")
+	implementation("org.togglz:togglz-kotlin:$togglzVersion")
+	implementation("org.togglz:togglz-spring-security:$togglzVersion")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	runtimeOnly("com.h2database:h2")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
