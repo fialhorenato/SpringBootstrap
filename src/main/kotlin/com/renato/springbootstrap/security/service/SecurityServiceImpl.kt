@@ -101,7 +101,7 @@ class SecurityServiceImpl(
         val authentication = SecurityContextHolder.getContext().authentication
         if (authentication.principal is UserDetails) {
             val authDetails = authentication.principal as UserDetails
-            val myUser = getUserByUsername(username = authDetails.myUsername)
+            val myUser = getUserByUsername(username = authDetails.username)
             myUser.email = email
             myUser.password = encoder.encode(password)
             return userRepository.save(myUser)
@@ -134,11 +134,11 @@ class SecurityServiceImpl(
                 .toList()
 
         return UserDetails(
-            userEntity.email,
             userEntity.username,
             userEntity.password,
             authorities,
-            roles
+            roles,
+            userEntity.email
         )
     }
 }

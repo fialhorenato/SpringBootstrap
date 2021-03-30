@@ -34,7 +34,7 @@ class JwtUtilsTest {
     fun generateJwtTokenSanity() {
         jwtUtils.jwtSecret = "95605770-21fe-43da-9986-8506693c1327"
         jwtUtils.jwtExpirationMs = 86400000
-        val principal = UserDetails("email", "username", "password", emptyList(), emptyList())
+        val principal = UserDetails("username", "password", emptyList(), emptyList(), "email")
         val authentication = UsernamePasswordAuthenticationToken(principal, "password", emptyList())
         assertDoesNotThrow { jwtUtils.generateJwtToken(authentication) }
     }
@@ -42,7 +42,7 @@ class JwtUtilsTest {
     @Test
     fun toUserDetailsSanity() {
         var userDetails = jwtUtils.toUserDetails(TOKEN)
-        assertThat(userDetails.myUsername).isEqualTo("teste")
+        assertThat(userDetails.username).isEqualTo("teste")
         assertThat(userDetails.email).isEqualTo("teste")
         assertThat(userDetails.roles).isNotEmpty
     }
@@ -51,7 +51,7 @@ class JwtUtilsTest {
     fun validateJwtTokenSanity() {
         jwtUtils.jwtSecret = "95605770-21fe-43da-9986-8506693c1327"
         jwtUtils.jwtExpirationMs = 86400000
-        val principal = UserDetails("email", "username", "password", emptyList(), emptyList())
+        val principal = UserDetails("username", "password", emptyList(), emptyList(), "email")
         val authentication = UsernamePasswordAuthenticationToken(principal, "password", emptyList())
         val token = jwtUtils.generateJwtToken(authentication)
 

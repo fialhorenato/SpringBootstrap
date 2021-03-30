@@ -1,28 +1,18 @@
 package com.renato.springbootstrap.security.service
 
+import org.springframework.boot.autoconfigure.security.SecurityProperties
+import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 
-class UserDetails(var email: String, var myUsername: String, private var myPassword: String, private var myAuthorities: List<SimpleGrantedAuthority>, var roles : List<String>) : UserDetails {
-
-    override fun getAuthorities(): List<SimpleGrantedAuthority> {
-        return myAuthorities
-    }
-
+class UserDetails(username: String, password: String, authorities: List<GrantedAuthority>, val roles : List<String>, val email : String) : User(username, password, authorities) {
     override fun isEnabled(): Boolean {
         return true
     }
 
-    override fun getUsername(): String {
-        return myUsername
-    }
-
     override fun isCredentialsNonExpired(): Boolean {
         return true
-    }
-
-    override fun getPassword(): String {
-        return myPassword
     }
 
     override fun isAccountNonExpired(): Boolean {
