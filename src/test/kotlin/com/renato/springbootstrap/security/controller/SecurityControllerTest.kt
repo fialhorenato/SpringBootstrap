@@ -45,7 +45,7 @@ class SecurityControllerTest {
 
     @Test
     fun meMustDelegateToService() {
-        `when`(securityService.me()).thenReturn(UserDetails("email", "username", "password", emptyList(), emptyList()))
+        `when`(securityService.me()).thenReturn(UserDetails("username", "password", emptyList(), emptyList(), "email"))
         securityController.me()
         verify(securityService).me()
     }

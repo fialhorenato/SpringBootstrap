@@ -89,7 +89,7 @@ class JwtUtils {
         val password = getPasswordFromJwtToken(token)
         val authorities = getAuthoritiesFromJwtToken(token)
         val roles = getRolesFromJwtToken(token)
-        return UserDetails(email, username, password, authorities, roles)
+        return UserDetails(username, password, authorities, roles, email)
     }
 
     fun validateJwtToken(authToken: String): Boolean {
