@@ -13,7 +13,7 @@ group = "com.renato"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
-var nimbusJose4jVersion = "9.8.1"
+var nimbusJose4jVersion = "9.9"
 var springDocVersion = "1.5.7"
 var postgreSQLVersion = "42.2.20"
 
