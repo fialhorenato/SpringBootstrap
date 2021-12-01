@@ -14,7 +14,7 @@ version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 var nimbusJose4jVersion = "9.9"
-var springDocVersion = "1.5.7"
+var springDocVersion = "1.5.13"
 var postgreSQLVersion = "42.2.20"
 
 repositories {
