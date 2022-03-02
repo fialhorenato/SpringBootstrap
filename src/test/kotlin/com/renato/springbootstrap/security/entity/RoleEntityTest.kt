@@ -30,9 +30,10 @@ class RoleEntityTest {
     fun cascadeSanity() {
         val user = generateUser()
         user.roles = listOf(generateRole(user))
-        userRepository.save(user)
+        val userSaved = userRepository.save(user)
         val roles = roleRepository.findAllByUser_Username("username")
         assertThat(roles).isNotEmpty
+        roles.forEach { assertThat(it.user.id).isEqualTo(userSaved.id) }
     }
 
     @Test
