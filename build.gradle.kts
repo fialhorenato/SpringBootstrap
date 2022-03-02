@@ -1,21 +1,21 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	id("org.springframework.boot") version "2.4.5"
+	id("org.springframework.boot") version "2.6.4"
 	id("io.spring.dependency-management") version "1.0.11.RELEASE"
-	kotlin("jvm") version "1.4.32"
-	kotlin("plugin.spring") version "1.5.0"
-	kotlin("plugin.jpa") version "1.5.0"
+	kotlin("jvm") version "1.6.10"
+	kotlin("plugin.spring") version "1.6.10"
+	kotlin("plugin.jpa") version "1.6.10"
 	jacoco
 }
 
 group = "com.renato"
 version = "0.0.1-SNAPSHOT"
-java.sourceCompatibility = JavaVersion.VERSION_11
+java.sourceCompatibility = JavaVersion.VERSION_17
 
-var nimbusJose4jVersion = "9.9"
-var springDocVersion = "1.5.7"
-var postgreSQLVersion = "42.2.20"
+var nimbusJose4jVersion = "9.20"
+var springDocVersion = "1.6.6"
+var postgreSQLVersion = "42.3.3"
 
 repositories {
 	mavenCentral()
@@ -23,10 +23,10 @@ repositories {
 
 tasks.jacocoTestReport {
 	reports {
-		xml.isEnabled = true
-		csv.isEnabled = true
-		html.isEnabled = true
-		html.destination = file("$buildDir/reports/coverage")
+		xml.required.set(true)
+		csv.required.set(true)
+		html.required.set(true)
+		html.outputLocation.set(file("$buildDir/reports/coverage"))
 	}
 }
 
@@ -63,8 +63,13 @@ dependencies {
 tasks.withType<KotlinCompile> {
 	kotlinOptions {
 		freeCompilerArgs = listOf("-Xjsr305=strict")
-		jvmTarget = "11"
+		jvmTarget = "17"
 	}
+}
+
+tasks.bootJar {
+	archiveBaseName.set("app")
+	archiveVersion.set("")
 }
 
 tasks.withType<Test> {
