@@ -1,0 +1,1 @@
+web: java -javaagent:/app/newrelic/newrelic.jar -jar build/libs/app.jar
