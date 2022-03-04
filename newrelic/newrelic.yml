@@ -350,15 +350,14 @@ common: &default_settings
 
 development:
   <<: *default_settings
-  app_name: My Application (Development)
+  developer_mode: true
 
 test:
   <<: *default_settings
-  app_name: My Application (Test)
+  developer_mode: true
 
 production:
   <<: *default_settings
 
 staging:
   <<: *default_settings
-  app_name: My Application (Staging)
