@@ -17,7 +17,7 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 val nimbusJose4jVersion = "9.21"
 val springDocVersion = "1.6.6"
 val postgreSQLVersion = "42.3.3"
-val newRelicJava = "7.5.0"
+val newRelicJava = "7.6.0"
 
 
 tasks.register<de.undercouch.gradle.tasks.download.Download>("downloadNewrelic") {
