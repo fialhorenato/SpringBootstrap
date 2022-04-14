@@ -1,4 +1,4 @@
-FROM openjdk:17 as builder
+FROM openjdk:17-oraclelinux8 as builder
 
 USER root
 
