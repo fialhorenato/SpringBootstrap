@@ -1,12 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	id("org.springframework.boot") version "2.6.5"
+	id("org.springframework.boot") version "2.6.6"
 	id("io.spring.dependency-management") version "1.0.11.RELEASE"
 	id ("de.undercouch.download") version "3.4.3"
-	kotlin("jvm") version "1.6.10"
-	kotlin("plugin.spring") version "1.6.10"
-	kotlin("plugin.jpa") version "1.6.10"
+	kotlin("jvm") version "1.6.20"
+	kotlin("plugin.spring") version "1.6.20"
+	kotlin("plugin.jpa") version "1.6.20"
 	jacoco
 }
 
@@ -15,9 +15,9 @@ version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 val nimbusJose4jVersion = "9.21"
-val springDocVersion = "1.6.6"
+val springDocVersion = "1.6.7"
 val postgreSQLVersion = "42.3.3"
-val newRelicJava = "7.5.0"
+val newRelicJava = "7.6.0"
 
 
 tasks.register<de.undercouch.gradle.tasks.download.Download>("downloadNewrelic") {
