@@ -16,12 +16,17 @@ USER app
 
 # Now it is time for us to build our real image on top of an alpine version of it
 
-FROM openjdk:17-alpine
+FROM debian:stretch-slim
 
-WORKDIR /app
+COPY --from=builder /opt/jre-minimal /opt/jre-minimal
+
+ENV JAVA_HOME=/opt/jre-minimal
+ENV PATH="$PATH:$JAVA_HOME/bin"
+
+VOLUME /tmp
 
 # Copy the JRE created in the last step into our $JAVA_HOME
 
-COPY --from=builder /opt/jre-minimal $JAVA_HOME
+COPY build/libs/app.jar app.jar
 
-COPY build/libs/app.jar build/app.jar
+ENTRYPOINT ["java","-jar","/app.jar"]
