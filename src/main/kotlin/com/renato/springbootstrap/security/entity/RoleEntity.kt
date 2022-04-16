@@ -24,8 +24,4 @@ data class RoleEntity(
 
     @Column(name = "updated_at")
     var updatedAt : Instant? = Instant.now()
-) {
-    override fun toString(): String {
-        return "RoleEntity(id=$id, user=${user.username}, role='$role')"
-    }
-}
+)

@@ -29,8 +29,4 @@ data class UserEntity (
         @LastModifiedDate
         @Column(name = "updated_at")
         var updatedAt : Instant? = Instant.now()
-) {
-        override fun toString(): String {
-                return "UserEntity(id=$id, username='$username', email='$email', password='$password', roles=$roles)"
-        }
-}
+)
