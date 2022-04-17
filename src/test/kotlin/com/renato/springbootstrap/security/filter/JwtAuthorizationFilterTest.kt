@@ -40,7 +40,6 @@ class JwtAuthorizationFilterTest {
         val request = mock(HttpServletRequest::class.java)
         val response = mock(HttpServletResponse::class.java)
         val filterChain = mock(FilterChain::class.java)
-        val userDetails = UserDetails("username", "password", emptyList(), emptyList(), "email")
 
         `when`(request.getHeader("Authorization")).thenReturn("Bearer token.token.token.token")
         `when`(jwtUtils.validateJwtToken("token.token.token.token")).thenReturn(false)
