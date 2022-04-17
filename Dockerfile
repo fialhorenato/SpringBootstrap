@@ -16,7 +16,7 @@ USER app
 
 # Now it is time for us to build our real image on top of an alpine version of it
 
-FROM debian:bullseye-20220328-slim
+FROM bitnami/minideb:latest
 
 COPY --from=builder /opt/jre-minimal /opt/jre-minimal
 
