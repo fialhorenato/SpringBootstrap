@@ -1,11 +1,14 @@
 package com.renato.springbootstrap.security.utils
 
+import com.nimbusds.jose.KeyLengthException
 import com.renato.springbootstrap.security.service.UserDetails
+import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.platform.commons.util.StringUtils
 import org.mockito.InjectMocks
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -57,8 +60,43 @@ class JwtUtilsTest {
 
         // Assertions
         assertDoesNotThrow { jwtUtils.validateJwtToken(token) }
-        assertThrows<ParseException> { jwtUtils.validateJwtToken("notAToken") }
+        assertThrows<ParseException>{jwtUtils.validateJwtToken("notAToken")}
         assertThat(jwtUtils.validateJwtToken(TOKEN)).isFalse
     }
 
+    @Test
+    fun validateJwtTokenWithoutSecretSanity() {
+        jwtUtils.jwtExpirationMs = 86400000
+        val principal = UserDetails("username", "password", emptyList(), emptyList(), "email")
+        val authentication = UsernamePasswordAuthenticationToken(principal, "password", emptyList())
+
+        // Assertions
+        assertThrows<UninitializedPropertyAccessException> { jwtUtils.generateJwtToken(authentication) }
+    }
+
+    @Test
+    fun validateInvalidSecretWithoutSecretSanity() {
+        jwtUtils.jwtExpirationMs = 86400000
+        jwtUtils.jwtSecret = "šššššššš"
+        val principal = UserDetails("username", "password", emptyList(), emptyList(), "email")
+        UsernamePasswordAuthenticationToken(principal, "password", emptyList())
+
+        // Assertions
+        val result = jwtUtils.validateJwtToken("")
+
+        assertThat(result).isFalse
+    }
+
+    @Test
+    fun validateEmptySecretWithoutSecretSanity() {
+        jwtUtils.jwtExpirationMs = 86400000
+        jwtUtils.jwtSecret = ""
+        val principal = UserDetails("username", "password", emptyList(), emptyList(), "email")
+        UsernamePasswordAuthenticationToken(principal, "password", emptyList())
+
+        // Assertions
+        val result = jwtUtils.validateJwtToken("")
+
+        assertThat(result).isFalse
+    }
 }
