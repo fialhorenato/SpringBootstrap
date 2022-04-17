@@ -4,6 +4,7 @@ import com.nimbusds.jose.JOSEException
 import com.nimbusds.jose.JWSAlgorithm.HS256
 import com.nimbusds.jose.JWSHeader
 import com.nimbusds.jose.JWSObject
+import com.nimbusds.jose.KeyLengthException
 import com.nimbusds.jose.Payload
 import com.nimbusds.jose.crypto.MACSigner
 import com.nimbusds.jose.crypto.MACVerifier
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.stereotype.Component
+import java.text.ParseException
 import java.util.*
 import kotlin.streams.toList
 
@@ -96,9 +98,6 @@ class JwtUtils {
         return try {
             val verifier = MACVerifier(jwtSecret)
             JWSObject.parse(authToken).verify(verifier)
-        } catch (e: IllegalStateException) {
-            logger.error("Illegal state exception: {}", e.message, e)
-            false
         } catch (e: JOSEException) {
             logger.error("Invalid JWT token: {}", e.message, e)
             false
