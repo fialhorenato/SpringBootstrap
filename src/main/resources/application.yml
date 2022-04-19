@@ -6,7 +6,6 @@ spring:
     url: jdbc:h2:mem:db;DB_CLOSE_DELAY=-1
     username: sa
     password: sa
-    driver-class-name: org.h2.Driver
 springdoc:
   api-docs:
     path: /api-docs
@@ -38,7 +37,6 @@ spring:
     url: jdbc:postgresql://localhost:5432/springbootstrap
     username: postgres
     password: postgres
-    driver-class-name: org.postgresql.Driver
   config:
     activate:
       on-profile: local-postgresql
@@ -47,10 +45,9 @@ spring:
 
 spring:
   datasource:
-    url: ${JDBC_DATABASE_URL}
-    username: ${JDBC_DATABASE_USERNAME}
-    password: ${JDBC_DATABASE_PASSWORD}
-    driver-class-name: org.postgresql.Driver
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
   config:
     activate:
       on-profile: heroku-postgresql
