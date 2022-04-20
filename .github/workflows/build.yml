@@ -14,7 +14,7 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v2
       - name: Snyk Scan
-        uses: snyk/actions/gradle@master
+        uses: snyk/actions/gradle-jdk16@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
@@ -41,6 +41,12 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
       - name: Build the tagged Docker image
         run: docker build . --tag ghcr.io/fialhorenato/springbootstrap:latest
+      - name: Run Snyk to check Docker image for vulnerabilities
+        uses: snyk/actions/docker@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          image: ghcr.io/fialhorenato/springbootstrap:latest
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
