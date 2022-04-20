@@ -16,7 +16,7 @@ USER app
 
 # Now it is time for us to build our real image on top of an alpine version of it
 
-FROM bitnami/minideb:jessie
+FROM bitnami/minideb:bullseye
 COPY --from=builder /opt/jre-minimal /opt/jre-minimal
 
 ENV JAVA_HOME=/opt/jre-minimal
