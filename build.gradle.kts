@@ -18,6 +18,8 @@ val nimbusJose4jVersion = "9.21"
 val springDocVersion = "1.6.7"
 val postgreSQLVersion = "42.3.4"
 val newRelicJava = "7.6.0"
+val liquibaseVersion = "4.9.1"
+val h2databaseVersion = "2.1.212"
 
 
 tasks.register<de.undercouch.gradle.tasks.download.Download>("downloadNewrelic") {
@@ -61,7 +63,7 @@ dependencies {
 	implementation("io.micrometer:micrometer-registry-prometheus")
 	implementation("org.springframework.boot:spring-boot-starter-undertow")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-	implementation("org.liquibase:liquibase-core")
+	implementation("org.liquibase:liquibase-core:$liquibaseVersion")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	implementation("com.nimbusds:nimbus-jose-jwt:$nimbusJose4jVersion")
@@ -69,7 +71,7 @@ dependencies {
 	implementation ("org.postgresql:postgresql:$postgreSQLVersion")
 	implementation("com.newrelic.agent.java:newrelic-java:$newRelicJava")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
-	runtimeOnly("com.h2database:h2")
+	runtimeOnly("com.h2database:h2:$h2databaseVersion")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")
 }
