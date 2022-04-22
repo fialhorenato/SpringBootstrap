@@ -14,9 +14,14 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v2
       - name: Snyk Scan
+        continue-on-error: true
         uses: snyk/actions/gradle-jdk16@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      - name: Upload result to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: snyk.sarif
   build:
     runs-on: ubuntu-latest
     steps:
