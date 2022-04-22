@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	id("org.springframework.boot") version "2.6.6"
+	id("org.springframework.boot") version "2.6.7"
 	id("io.spring.dependency-management") version "1.0.11.RELEASE"
 	id ("de.undercouch.download") version "3.4.3"
 	kotlin("jvm") version "1.6.21"
@@ -14,8 +14,8 @@ group = "com.renato"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
-val nimbusJose4jVersion = "9.21"
-val springDocVersion = "1.6.7"
+val nimbusJose4jVersion = "9.21.1"
+val springDocVersion = "1.6.8"
 val postgreSQLVersion = "42.3.4"
 val newRelicJava = "7.6.0"
 val liquibaseVersion = "4.9.1"
