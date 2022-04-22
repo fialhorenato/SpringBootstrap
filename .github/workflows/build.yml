@@ -17,8 +17,6 @@ jobs:
         uses: snyk/actions/gradle-jdk16@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          command: monitor
   build:
     runs-on: ubuntu-latest
     steps:
