@@ -14,7 +14,7 @@ group = "com.renato"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
-val nimbusJose4jVersion = "9.21.1"
+val nimbusJose4jVersion = "9.22"
 val springDocVersion = "1.6.8"
 val postgreSQLVersion = "42.3.4"
 val newRelicJava = "7.6.0"
