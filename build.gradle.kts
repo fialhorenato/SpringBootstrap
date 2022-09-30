@@ -4,7 +4,7 @@ plugins {
 	id("org.springframework.boot") version "2.7.0"
 	id("io.spring.dependency-management") version "1.0.11.RELEASE"
 	id ("de.undercouch.download") version "3.4.3"
-	kotlin("jvm") version "1.7.0"
+	kotlin("jvm") version "1.7.20"
 	kotlin("plugin.spring") version "1.7.0"
 	kotlin("plugin.jpa") version "1.7.0"
 	jacoco
