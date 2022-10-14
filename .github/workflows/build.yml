@@ -46,18 +46,6 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
       - name: Build the tagged Docker image
         run: docker build . --tag ghcr.io/fialhorenato/springbootstrap:latest
-      - name: Run Snyk to check Docker image for vulnerabilities
-        continue-on-error: true
-        uses: snyk/actions/docker@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          image: ghcr.io/fialhorenato/springbootstrap:latest
-          args: --file=Dockerfile
-      - name: Upload result to GitHub Code Scanning
-        uses: github/codeql-action/upload-sarif@v1
-        with:
-          sarif_file: snyk.sarif
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
