@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer
+import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer
 import org.springframework.security.config.http.SessionCreationPolicy.STATELESS
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -28,22 +29,31 @@ class SecurityConfig(private val jwtAuthorizationFilter: JwtAuthorizationFilter)
     @Bean
     fun configure(http: HttpSecurity): SecurityFilterChain {
         http
-                .cors().and()
+                .cors()
+                .and()
                 .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(STATELESS).and()
-                .authorizeHttpRequests {
-                    it.requestMatchers("/security/**").permitAll()
-                            .requestMatchers(toAnyEndpoint()).permitAll()
-                            .requestMatchers("/hello-world/insecure").permitAll()
-                            .requestMatchers("/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                            .anyRequest()
-                            .authenticated()
-                            .and()
-                            .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter::class.java)
-                }
+                .sessionManagement()
+                .sessionCreationPolicy(STATELESS)
+                .and()
+                .authorizeHttpRequests(this::authorizeHttpRequests)
 
         return http.build();
     }
+
+    private fun authorizeHttpRequests(it: AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry) {
+        it
+                .requestMatchers("/security/**").permitAll()
+                .requestMatchers(toAnyEndpoint()).permitAll()
+                .requestMatchers("/hello-world/insecure").permitAll()
+                .requestMatchers("/api-docs/**").permitAll()
+                .requestMatchers("/swagger-ui/**").permitAll()
+                .requestMatchers("/swagger-ui.html").permitAll()
+                .anyRequest()
+                .authenticated()
+                .and()
+                .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter::class.java)
+    }
+
     @Bean
     fun passwordEncoder(): PasswordEncoder {
         return BCryptPasswordEncoder()
