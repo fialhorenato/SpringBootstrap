@@ -1,10 +1,9 @@
 package com.renato.springbootstrap.security.entity
 
+import jakarta.persistence.*
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import java.time.Instant
-import javax.persistence.*
-import javax.persistence.CascadeType.ALL
 
 @Entity
 @Table(name = "users")
@@ -19,7 +18,7 @@ data class UserEntity (
 
         var password : String,
 
-        @OneToMany(cascade = [ALL], mappedBy = "user")
+        @OneToMany(cascade = [CascadeType.ALL], mappedBy = "user")
         var roles : List<RoleEntity>,
 
         @CreatedDate

@@ -1,12 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	id("org.springframework.boot") version "2.7.0"
-	id("io.spring.dependency-management") version "1.0.11.RELEASE"
+	id("org.springframework.boot") version "3.0.0"
+	id("io.spring.dependency-management") version "1.1.0"
 	id ("de.undercouch.download") version "3.4.3"
-	kotlin("jvm") version "1.7.0"
-	kotlin("plugin.spring") version "1.7.0"
-	kotlin("plugin.jpa") version "1.7.0"
+	kotlin("jvm") version "1.7.21"
+	kotlin("plugin.spring") version "1.7.21"
+	kotlin("plugin.jpa") version "1.7.21"
 	jacoco
 }
 
@@ -15,10 +15,10 @@ version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 val nimbusJose4jVersion = "9.25.6"
-val springDocVersion = "1.6.9"
+val springDocVersion = "2.0.0"
 val postgreSQLVersion = "42.4.0"
 val newRelicJava = "7.8.0"
-val liquibaseVersion = "4.12.0"
+val liquibaseVersion = "4.17.2"
 val h2databaseVersion = "2.1.214"
 
 
@@ -56,6 +56,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-security")
+	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("org.springframework.boot:spring-boot-starter-web") {
 		exclude(module = "spring-boot-starter-tomcat")
 		exclude("org.apache.tomcat")
@@ -67,7 +68,7 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	implementation("com.nimbusds:nimbus-jose-jwt:$nimbusJose4jVersion")
-	implementation ("org.springdoc:springdoc-openapi-ui:$springDocVersion")
+	implementation ("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springDocVersion")
 	implementation ("org.postgresql:postgresql:$postgreSQLVersion")
 	implementation("com.newrelic.agent.java:newrelic-java:$newRelicJava")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")

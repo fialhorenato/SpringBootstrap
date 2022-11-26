@@ -8,6 +8,7 @@ import com.renato.springbootstrap.security.repository.RoleRepository
 import com.renato.springbootstrap.security.repository.UserRepository
 import com.renato.springbootstrap.security.utils.JwtUtils
 import com.renato.springbootstrap.security.utils.JwtUtils.Companion.ROLE_PREFIX
+import org.springframework.context.annotation.Lazy
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.security.access.AccessDeniedException
@@ -24,11 +25,11 @@ import java.util.Objects.nonNull
 
 @Service
 class SecurityServiceImpl(
-    private val authenticationManager: AuthenticationManager,
-    private val userRepository: UserRepository,
-    private val jwtUtils: JwtUtils,
-    private val encoder: PasswordEncoder,
-    private val roleRepository: RoleRepository
+        @Lazy private val authenticationManager:  AuthenticationManager,
+        private val userRepository: UserRepository,
+        private val jwtUtils: JwtUtils,
+        private val encoder: PasswordEncoder,
+        private val roleRepository: RoleRepository
 ) : SecurityService {
 
     @Transactional(readOnly = true)
