@@ -2,7 +2,9 @@ package com.renato.springbootstrap.security.filter
 
 import com.renato.springbootstrap.security.service.UserDetails
 import com.renato.springbootstrap.security.utils.JwtUtils
-import io.undertow.servlet.spec.HttpServletRequestImpl
+import jakarta.servlet.FilterChain
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers
@@ -10,9 +12,6 @@ import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito.*
 import org.mockito.junit.jupiter.MockitoExtension
-import javax.servlet.FilterChain
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
 
 @ExtendWith(MockitoExtension::class)
 class JwtAuthorizationFilterTest {

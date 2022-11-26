@@ -1,9 +1,7 @@
 package com.renato.springbootstrap.security.entity
 
+import jakarta.persistence.*
 import java.time.Instant
-import javax.persistence.*
-import javax.persistence.FetchType.LAZY
-import javax.persistence.GenerationType.IDENTITY
 
 @Entity
 @Table(name = "roles",
@@ -11,10 +9,10 @@ import javax.persistence.GenerationType.IDENTITY
 )
 data class RoleEntity(
     @Id
-    @GeneratedValue(strategy = IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null,
 
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     var user: UserEntity,
 
     var role: String,
