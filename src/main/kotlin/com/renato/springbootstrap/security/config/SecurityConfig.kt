@@ -1,9 +1,11 @@
 package com.renato.springbootstrap.security.config
 
 import com.renato.springbootstrap.security.filter.JwtAuthorizationFilter
+import com.renato.springbootstrap.security.service.SecurityService
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest.toAnyEndpoint
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Lazy
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
@@ -24,7 +26,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity(
         securedEnabled = true
 )
-class SecurityConfig(private val jwtAuthorizationFilter: JwtAuthorizationFilter) {
+class SecurityConfig(
+    private val jwtAuthorizationFilter: JwtAuthorizationFilter ,
+    @Lazy private val securityService: SecurityService
+) {
 
     @Bean
     fun configure(http: HttpSecurity): SecurityFilterChain {
@@ -51,6 +56,7 @@ class SecurityConfig(private val jwtAuthorizationFilter: JwtAuthorizationFilter)
                 .anyRequest()
                 .authenticated()
                 .and()
+                .userDetailsService(securityService)
                 .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter::class.java)
     }
 

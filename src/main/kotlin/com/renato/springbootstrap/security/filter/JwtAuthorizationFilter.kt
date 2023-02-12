@@ -24,6 +24,7 @@ class JwtAuthorizationFilter(private val jwtUtils: JwtUtils) : OncePerRequestFil
     ) {
         val header = request.getHeader(HEADER)
         if (header.isNullOrEmpty() || !header.startsWith(TOKEN_PREFIX)) {
+            response.status = 401
             filterChain.doFilter(request, response)
             return
         }
