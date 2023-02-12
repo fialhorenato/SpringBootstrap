@@ -3,8 +3,6 @@
 [![Build](https://github.com/fialhorenato/SpringBootstrap/actions/workflows/build.yml/badge.svg)](https://github.com/fialhorenato/SpringBootstrap/actions/workflows/build.yml)
 [![codecov](https://codecov.io/gh/fialhorenato/SpringBootstrap/branch/main/graph/badge.svg?token=8ATZXFJK2Q)](https://codecov.io/gh/fialhorenato/SpringBootstrap)
 
-You can find the Swagger-ui of the application [here](https://springbootstrap.herokuapp.com/swagger-ui.html)
-
 This is a basic project using Spring Boot, Kotlin and Gradle.
 
 Those are the Spring modules used:
