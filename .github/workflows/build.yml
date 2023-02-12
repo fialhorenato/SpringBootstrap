@@ -52,7 +52,7 @@ jobs:
         uses: docker/login-action@v2
         with:
           registry: ghcr.io
-          username: ${{ GITHUB_REPOSITORY_OWNER }}
+          username: ${{ vars.GITHUB_REPOSITORY_OWNER }}
           password: ${{ secrets.CR_PAT }}
       - name: Push to Docker Github
         run: docker push ghcr.io/fialhorenato/springbootstrap:latest
