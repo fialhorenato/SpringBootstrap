@@ -7,10 +7,11 @@ on:
   push:
     branches: [ main ]
 
+permissions : write-all
+
 jobs:
   snyk-scan:
     runs-on: ubuntu-latest
-    permissions: write-all
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
@@ -27,7 +28,6 @@ jobs:
           sarif_file: snyk.sarif
   build:
     runs-on: ubuntu-latest
-    permissions: write-all
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
