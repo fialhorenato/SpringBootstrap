@@ -26,4 +26,3 @@ In order to work those, you must generate secrets for them and put in your repos
 
 - CODECOV_TOKEN
 - SNYK_TOKEN
-- CR_PAT
