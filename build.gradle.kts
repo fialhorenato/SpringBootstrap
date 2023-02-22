@@ -4,9 +4,9 @@ plugins {
 	id("org.springframework.boot") version "3.0.2"
 	id("io.spring.dependency-management") version "1.1.0"
 	id ("de.undercouch.download") version "3.4.3"
-	kotlin("jvm") version "1.8.10"
-	kotlin("plugin.spring") version "1.8.10"
-	kotlin("plugin.jpa") version "1.8.10"
+	kotlin("jvm") version "1.8.0"
+	kotlin("plugin.spring") version "1.8.0"
+	kotlin("plugin.jpa") version "1.8.0"
 	jacoco
 }
 
@@ -14,7 +14,7 @@ group = "com.renato"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
-val nimbusJose4jVersion = "9.30.2"
+val nimbusJose4jVersion = "9.31"
 val springDocVersion = "2.0.2"
 val postgreSQLVersion = "42.5.4"
 val newRelicJava = "8.0.0"
