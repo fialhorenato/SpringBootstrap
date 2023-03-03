@@ -18,7 +18,7 @@ val nimbusJose4jVersion = "9.31"
 val springDocVersion = "2.0.2"
 val postgreSQLVersion = "42.5.4"
 val newRelicJava = "8.0.1"
-val liquibaseVersion = "4.19.0"
+val liquibaseVersion = "4.19.1"
 val h2databaseVersion = "2.1.214"
 
 
