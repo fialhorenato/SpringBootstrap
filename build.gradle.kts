@@ -59,10 +59,9 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("org.springframework.boot:spring-boot-starter-web") {
 		exclude(module = "spring-boot-starter-tomcat")
-		exclude("org.apache.tomcat")
 	}
-	implementation("io.micrometer:micrometer-registry-prometheus")
-	implementation("org.springframework.boot:spring-boot-starter-undertow")
+	implementation("org.springframework.boot:spring-boot-starter-jetty")
+	implementation("io.micrometer:micrometer-registry-prometheus")	
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.liquibase:liquibase-core:$liquibaseVersion")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
