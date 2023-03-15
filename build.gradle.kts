@@ -48,7 +48,6 @@ tasks.jacocoTestReport {
 configurations {
 	implementation.configure {
 		exclude(module = "spring-boot-starter-tomcat")
-		exclude("org.apache.tomcat")
 	}
 }
 
