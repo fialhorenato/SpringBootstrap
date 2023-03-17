@@ -7,7 +7,9 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.transaction.annotation.Isolation
 import org.springframework.transaction.annotation.Transactional
 
-@SpringBootTest(properties = ["spring.jpa.show-sql=true"])
+@SpringBootTest(
+    properties = ["spring.jpa.show-sql=true"]
+)
 class SecurityServiceJpaTest {
     @Autowired
     lateinit var securityService: SecurityServiceImpl

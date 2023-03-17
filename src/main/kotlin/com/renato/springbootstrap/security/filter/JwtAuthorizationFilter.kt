@@ -4,6 +4,7 @@ import com.renato.springbootstrap.security.utils.JwtUtils
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.springframework.http.HttpHeaders
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
@@ -13,7 +14,6 @@ import org.springframework.web.filter.OncePerRequestFilter
 @Component
 class JwtAuthorizationFilter(private val jwtUtils: JwtUtils) : OncePerRequestFilter() {
     companion object {
-        const val HEADER = "Authorization"
         const val TOKEN_PREFIX = "Bearer"
     }
 
@@ -22,10 +22,10 @@ class JwtAuthorizationFilter(private val jwtUtils: JwtUtils) : OncePerRequestFil
             response: HttpServletResponse,
             filterChain: FilterChain
     ) {
-        val header = request.getHeader(HEADER)
-        if (header.isNullOrEmpty() || !header.startsWith(TOKEN_PREFIX)) {
-            response.status = 401
-            filterChain.doFilter(request, response)
+        val header = request.getHeader(HttpHeaders.AUTHORIZATION)
+
+        if (header == null || !header.startsWith(TOKEN_PREFIX)) {
+            filterChain.doFilter(request, response);
             return
         }
         

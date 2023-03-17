@@ -45,21 +45,12 @@ tasks.jacocoTestReport {
 	}
 }
 
-configurations {
-	implementation.configure {
-		exclude(module = "spring-boot-starter-tomcat")
-	}
-}
-
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
-	implementation("org.springframework.boot:spring-boot-starter-web") {
-		exclude(module = "spring-boot-starter-tomcat")
-	}
-	implementation("org.springframework.boot:spring-boot-starter-jetty")
+	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("io.micrometer:micrometer-registry-prometheus")	
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.liquibase:liquibase-core:$liquibaseVersion")
@@ -73,8 +64,8 @@ dependencies {
 	runtimeOnly("com.h2database:h2:$h2databaseVersion")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")
-}
 
+}
 
 
 tasks.withType<KotlinCompile> {
