@@ -14,10 +14,6 @@ springdoc:
 management:
   server:
     port: 8081
-  metrics:
-    export:
-      prometheus:
-        enabled: true
   endpoint:
     metrics:
       enabled: false
@@ -27,11 +23,14 @@ management:
     web:
       exposure:
         include: '*'
+  prometheus:
+    metrics:
+      export:
+        enabled: true
 
 jwt:
   jwt-secret: 59fedfab-9fa7-4a33-9ea0-c76e7729009a
   jwt-expiration-ms: 86400000
-
 ---
 
 spring:
