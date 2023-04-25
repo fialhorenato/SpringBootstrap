@@ -6,7 +6,7 @@ plugins {
 	id ("de.undercouch.download") version "3.4.3"
 	kotlin("jvm") version "1.8.20"
 	kotlin("plugin.spring") version "1.8.20"
-	kotlin("plugin.jpa") version "1.8.20"
+	kotlin("plugin.jpa") version "1.8.21"
 	jacoco
 }
 
