@@ -20,7 +20,7 @@ val springDocVersion = "2.1.0"
 val postgreSQLVersion = "42.6.0"
 val newRelicJava = "8.4.0"
 val liquibaseVersion = "4.23.0"
-val h2databaseVersion = "2.1.214"
+val h2databaseVersion = "2.2.220"
 
 
 tasks.register<de.undercouch.gradle.tasks.download.Download>("downloadNewrelic") {
