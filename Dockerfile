@@ -16,7 +16,7 @@ USER app
 
 # Now it is time for us to build our real image on top of an alpine version of it
 
-FROM redhat/ubi8-minimal
+FROM redhat/ubi8-minimal:8.9-1108.1706795067
 COPY --from=builder /opt/jre-minimal /opt/jre-minimal
 
 ENV JAVA_HOME=/opt/jre-minimal
