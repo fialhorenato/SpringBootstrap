@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    	val kotlinVersion = "1.9.22"
+    	val kotlinVersion = "1.9.23"
     	id("org.springframework.boot") version "3.2.3"
     	id("io.spring.dependency-management") version "1.1.4"
 	id ("de.undercouch.download") version "3.4.3"
