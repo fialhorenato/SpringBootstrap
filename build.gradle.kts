@@ -16,7 +16,7 @@ version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 val nimbusJose4jVersion = "9.37.3"
-val springDocVersion = "2.3.0"
+val springDocVersion = "2.4.0"
 val postgreSQLVersion = "42.7.2"
 val newRelicJava = "8.9.1"
 val liquibaseVersion = "4.26.0"
