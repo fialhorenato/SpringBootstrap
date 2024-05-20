@@ -57,7 +57,7 @@ jobs:
       - name: Push to Docker Github
         run: docker push ghcr.io/fialhorenato/springbootstrap:latest
       - name: Deploy to production
-        uses: johnbeynon/render-deploy-action@v0.0.8
+        uses: johnbeynon/render-deploy-action@v0.0.9
         with:
           service-id: ${{ secrets.MY_RENDER_SERVICE_ID }}
           api-key: ${{ secrets.MY_RENDER_API_KEY }}
