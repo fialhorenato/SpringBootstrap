@@ -17,12 +17,12 @@ databaseChangeLog:
                   name: username
                   type: varchar(20)
                   constraints:
-                    - unique: true
+                    unique: true
               - column:
                   name: email
                   type: varchar(50)
                   constraints:
-                    - unique: true
+                    unique: true
               - column:
                   name: password
                   type: varchar(120)

@@ -1,5 +1,6 @@
 package com.renato.springbootstrap.security.exception.handler
 
+import com.renato.springbootstrap.exception.ExceptionHandler
 import com.renato.springbootstrap.security.exception.UserAlreadyExistsException
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
@@ -13,7 +14,7 @@ import java.lang.Exception
 @ExtendWith(MockitoExtension::class)
 class ErrorHandlerTest {
     @InjectMocks
-    lateinit var errorHandler: ErrorHandler
+    lateinit var errorHandler: ExceptionHandler
 
     @Test
     fun errorHandlerSanity() {
