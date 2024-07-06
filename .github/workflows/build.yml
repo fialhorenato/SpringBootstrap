@@ -10,22 +10,6 @@ on:
 permissions : write-all
 
 jobs:
-  snyk-scan:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v4
-      - name: Snyk Scan
-        continue-on-error: true
-        uses: snyk/actions/gradle-jdk21@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          args: --sarif-file-output=snyk.sarif
-      - name: Upload result to GitHub Code Scanning
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: snyk.sarif
   build:
     runs-on: ubuntu-latest
     steps:
