@@ -3,10 +3,9 @@ package com.renato.springbootstrap.security.controller
 import com.renato.springbootstrap.factory.UserFactory
 import com.renato.springbootstrap.security.api.request.LoginRequestDTO
 import com.renato.springbootstrap.security.api.request.SignupRequestDTO
-import com.renato.springbootstrap.security.api.request.UpdateUserRequestDTO
-import com.renato.springbootstrap.security.service.SecurityService
-import com.renato.springbootstrap.security.service.UserDetails
-import org.junit.jupiter.api.BeforeAll
+import com.renato.springbootstrap.security.domain.UserSecurity
+import com.renato.springbootstrap.security.service.UserService
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
@@ -18,9 +17,9 @@ import org.mockito.junit.jupiter.MockitoExtension
 class SecurityControllerTest {
     companion object {
         @Mock
-        lateinit var securityService: SecurityService
+        lateinit var securityService: UserService
 
-        @BeforeAll
+        @BeforeEach
         fun setup() {
             verifyNoInteractions(securityService)
         }
@@ -45,7 +44,7 @@ class SecurityControllerTest {
 
     @Test
     fun meMustDelegateToService() {
-        `when`(securityService.me()).thenReturn(UserDetails("username", "password", emptyList(), emptyList(), "email"))
+        `when`(securityService.me()).thenReturn(UserSecurity(0L, "username", "password", "email", emptyList(), emptyList()))
         securityController.me()
         verify(securityService).me()
     }

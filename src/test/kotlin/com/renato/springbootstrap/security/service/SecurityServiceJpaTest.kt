@@ -4,15 +4,13 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.transaction.annotation.Isolation
-import org.springframework.transaction.annotation.Transactional
 
 @SpringBootTest(
     properties = ["spring.jpa.show-sql=true"]
 )
 class SecurityServiceJpaTest {
     @Autowired
-    lateinit var securityService: SecurityServiceImpl
+    lateinit var securityService: UserServiceImpl
 
     @Test
     fun rolesSanity() {
