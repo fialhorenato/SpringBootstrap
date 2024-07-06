@@ -1,20 +1,18 @@
 package com.renato.springbootstrap.security.config
 
 import com.renato.springbootstrap.security.filter.JwtAuthorizationFilter
-import com.renato.springbootstrap.security.service.SecurityService
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest.toAnyEndpoint
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Lazy
 import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
-import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer
 import org.springframework.security.config.http.SessionCreationPolicy.STATELESS
+import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
@@ -28,22 +26,19 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 )
 class SecurityConfig(
     private val jwtAuthorizationFilter: JwtAuthorizationFilter ,
-    @Lazy private val securityService: SecurityService
+    private val userDetailsService: UserDetailsService
 ) {
 
     @Bean
     fun configure(http: HttpSecurity): SecurityFilterChain {
-        http
-                .cors()
-                .and()
-                .csrf()
-                .disable()
-                .sessionManagement()
-                .sessionCreationPolicy(STATELESS)
-                .and()
-                .authorizeHttpRequests(this::authorizeHttpRequests)
-
-        return http.build();
+        return http
+            .cors(Customizer.withDefaults())
+            .csrf { it.disable() }
+            .sessionManagement { STATELESS }
+            .authorizeHttpRequests { authorizeHttpRequests(it) }
+            .userDetailsService(userDetailsService)
+            .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter::class.java)
+            .build()
     }
 
     private fun authorizeHttpRequests(it: AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry) {
@@ -56,9 +51,6 @@ class SecurityConfig(
                 .requestMatchers("/swagger-ui.html").permitAll()
                 .anyRequest()
                 .authenticated()
-                .and()
-                .userDetailsService(securityService)
-                .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter::class.java)
     }
 
     @Bean

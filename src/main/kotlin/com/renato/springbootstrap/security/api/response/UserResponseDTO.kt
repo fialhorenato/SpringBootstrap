@@ -1,7 +1,7 @@
 package com.renato.springbootstrap.security.api.response
 
+import com.renato.springbootstrap.security.domain.UserSecurity
 import com.renato.springbootstrap.security.entity.UserEntity
-import com.renato.springbootstrap.security.service.UserDetails
 
 
 data class UserResponseDTO(
@@ -16,10 +16,10 @@ data class UserResponseDTO(
         user.roles.map { it.role }.toList()
     )
 
-    constructor(userDetails : UserDetails) : this(
-        userDetails.username ,
-        userDetails.email,
-        userDetails.roles
+    constructor(userSecurity: UserSecurity) : this(
+        userSecurity.username ,
+        userSecurity.email,
+        userSecurity.roles
     )
 
 }

@@ -2,6 +2,7 @@ package com.renato.springbootstrap.security.service
 
 import com.renato.springbootstrap.exception.NotFoundException
 import com.renato.springbootstrap.factory.UserFactory
+import com.renato.springbootstrap.security.domain.UserSecurity
 import com.renato.springbootstrap.security.entity.RoleEntity
 import com.renato.springbootstrap.security.entity.UserEntity
 import com.renato.springbootstrap.security.exception.UserAlreadyExistsException
@@ -24,14 +25,13 @@ import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
 import java.util.*
 
 @ExtendWith(MockitoExtension::class)
 class SecurityServiceTest {
     @InjectMocks
-    lateinit var securityService: SecurityServiceImpl
+    lateinit var securityService: UserServiceImpl
 
     @Mock
     lateinit var userRepository: UserRepository
@@ -47,20 +47,6 @@ class SecurityServiceTest {
 
     @Mock
     lateinit var jwtUtils: JwtUtils
-
-    @Test
-    @DisplayName("Load user by username must not throw error")
-    fun loadUserByUsernameSanity() {
-        Mockito.`when`(userRepository.findByUsername("username")).thenReturn(UserFactory.generateUser())
-        assertDoesNotThrow { securityService.loadUserByUsername("username") }
-    }
-
-    @Test
-    @DisplayName("Load user by username not existing must throw error")
-    fun loadUserByUsernameDoesNotExistSanity() {
-        Mockito.`when`(userRepository.findByUsername("username")).thenReturn(null)
-        assertThrows<UsernameNotFoundException> { securityService.loadUserByUsername("username") }
-    }
 
     @Test
     @DisplayName("Add role must call the repository once")
@@ -123,7 +109,7 @@ class SecurityServiceTest {
     @Test
     @DisplayName("Authentication sanity")
     fun authenticateSanity() {
-        val principal = UserDetails("username", "password", emptyList(), emptyList(), "email")
+        val principal = UserSecurity(1L, "username", "password", "email", emptyList(), emptyList())
         val authentication = UsernamePasswordAuthenticationToken(principal, "password", emptyList())
         Mockito.`when`(authenticationManager.authenticate(Mockito.any(UsernamePasswordAuthenticationToken::class.java))).thenReturn(authentication)
         securityService.authenticate("username", "password")
@@ -133,7 +119,7 @@ class SecurityServiceTest {
     @Test
     @DisplayName("Me sanity")
     fun meSanity() {
-        val principal = UserDetails("username", "password", emptyList(), emptyList(), "email")
+        val principal = UserSecurity(1L, "username", "password", "email", emptyList(), emptyList())
         val authentication = UsernamePasswordAuthenticationToken(principal, "password", emptyList())
         SecurityContextHolder.getContext().authentication = authentication
         assertDoesNotThrow { securityService.me() }
@@ -144,7 +130,7 @@ class SecurityServiceTest {
     fun updateSanity() {
         // Given
         val user = UserFactory.generateUser()
-        val principal = UserDetails("username", "password", emptyList(), emptyList(), "email")
+        val principal = UserSecurity(1L, "username", "password", "email", emptyList(), emptyList())
         val authentication = UsernamePasswordAuthenticationToken(principal, "password", emptyList())
 
         // When
@@ -155,6 +141,18 @@ class SecurityServiceTest {
 
         // Then
         assertDoesNotThrow { securityService.updateUser("email", "password") }
+    }
+
+    @Test
+    @DisplayName("Update throw exception")
+    fun updateThrowExceptionSanity() {
+        // Given
+        val authentication = UsernamePasswordAuthenticationToken(null, "password", emptyList())
+
+        SecurityContextHolder.getContext().authentication = authentication
+
+        // Then
+        assertThrows<IllegalArgumentException> { securityService.updateUser("email", "password") }
     }
 
     @Test

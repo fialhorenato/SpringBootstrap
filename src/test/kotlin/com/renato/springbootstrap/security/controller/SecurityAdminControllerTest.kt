@@ -5,9 +5,9 @@ import com.renato.springbootstrap.factory.UserFactory.Companion.generateUser
 import com.renato.springbootstrap.security.api.request.LoginRequestDTO
 import com.renato.springbootstrap.security.api.request.SignupRequestDTO
 import com.renato.springbootstrap.security.api.request.UpdateUserRequestDTO
-import com.renato.springbootstrap.security.service.SecurityService
-import com.renato.springbootstrap.security.service.UserDetails
+import com.renato.springbootstrap.security.service.UserService
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
@@ -23,9 +23,9 @@ import org.springframework.data.domain.Pageable.unpaged
 class SecurityAdminControllerTest {
     companion object {
         @Mock
-        lateinit var securityService: SecurityService
+        lateinit var securityService: UserService
 
-        @BeforeAll
+        @BeforeEach
         fun setup() {
             verifyNoInteractions(securityService)
         }

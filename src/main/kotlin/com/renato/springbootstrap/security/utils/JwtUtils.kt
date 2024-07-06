@@ -4,21 +4,18 @@ import com.nimbusds.jose.JOSEException
 import com.nimbusds.jose.JWSAlgorithm.HS256
 import com.nimbusds.jose.JWSHeader
 import com.nimbusds.jose.JWSObject
-import com.nimbusds.jose.KeyLengthException
 import com.nimbusds.jose.Payload
 import com.nimbusds.jose.crypto.MACSigner
 import com.nimbusds.jose.crypto.MACVerifier
 import com.nimbusds.jwt.JWTClaimsSet
-import com.renato.springbootstrap.security.service.UserDetails
+import com.renato.springbootstrap.security.domain.UserSecurity
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.stereotype.Component
-import java.text.ParseException
 import java.util.*
-import kotlin.streams.toList
 
 @Component
 class JwtUtils {
@@ -51,7 +48,7 @@ class JwtUtils {
     }
 
     private fun getClaims(authentication: Authentication): JWTClaimsSet {
-        val userPrincipal = authentication.principal as UserDetails
+        val userPrincipal = authentication.principal as UserSecurity
         return JWTClaimsSet.Builder()
             .claim(EMAIL_CLAIM, userPrincipal.email)
             .claim(ROLES_CLAIM, userPrincipal.roles)
@@ -75,7 +72,7 @@ class JwtUtils {
     }
 
     fun getRolesFromJwtToken(token: String): List<String> {
-        val roles = JWSObject.parse(token).payload.toJSONObject()[ROLES_CLAIM]  as List<*>
+        val roles = JWSObject.parse(token).payload.toJSONObject()[ROLES_CLAIM] as List<*>
         return roles.filterIsInstance<String>().map {it}
     }
 
@@ -85,13 +82,13 @@ class JwtUtils {
             .toList()
     }
 
-    fun toUserDetails(token : String): UserDetails {
+    fun toUserDetails(token : String): UserSecurity {
         val username: String = getUserNameFromJwtToken(token)
         val email = getEmailFromJwtToken(token)
         val password = getPasswordFromJwtToken(token)
         val authorities = getAuthoritiesFromJwtToken(token)
         val roles = getRolesFromJwtToken(token)
-        return UserDetails(username, password, authorities, roles, email)
+        return UserSecurity(null, username, password, email, authorities, roles)
     }
 
     fun validateJwtToken(authToken: String): Boolean {

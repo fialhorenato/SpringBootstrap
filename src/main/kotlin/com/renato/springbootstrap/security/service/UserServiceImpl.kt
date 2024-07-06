@@ -1,43 +1,32 @@
 package com.renato.springbootstrap.security.service
 
 import com.renato.springbootstrap.exception.NotFoundException
+import com.renato.springbootstrap.security.domain.UserSecurity
 import com.renato.springbootstrap.security.entity.RoleEntity
 import com.renato.springbootstrap.security.entity.UserEntity
 import com.renato.springbootstrap.security.exception.UserAlreadyExistsException
 import com.renato.springbootstrap.security.repository.RoleRepository
 import com.renato.springbootstrap.security.repository.UserRepository
 import com.renato.springbootstrap.security.utils.JwtUtils
-import com.renato.springbootstrap.security.utils.JwtUtils.Companion.ROLE_PREFIX
-import org.springframework.context.annotation.Lazy
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.Collections.emptyList
-import java.util.Objects.nonNull
+import java.util.*
 
 @Service
-class SecurityServiceImpl(
-        @Lazy private val authenticationManager:  AuthenticationManager,
-        private val userRepository: UserRepository,
-        private val jwtUtils: JwtUtils,
-        private val encoder: PasswordEncoder,
-        private val roleRepository: RoleRepository
-) : SecurityService {
-
-    @Transactional(readOnly = true)
-    override fun loadUserByUsername(username: String): UserDetails {
-        val user = userRepository.findByUsername(username)
-        return user?.let { toUserDetails(it) } ?: throw UsernameNotFoundException("Username $username not found")
-    }
-
+class UserServiceImpl (
+    private val userRepository: UserRepository,
+    private val roleRepository: RoleRepository,
+    private val encoder: PasswordEncoder,
+    private val jwtUtils: JwtUtils,
+    private val authenticationManager: AuthenticationManager
+) : UserService {
     override fun addRole(username: String, role: String) {
         roleRepository.save(RoleEntity(role = role, user = getUserByUsername(username)))
     }
@@ -46,38 +35,36 @@ class SecurityServiceImpl(
         roleRepository.deleteByUserAndRole(role = role, user = getUserByUsername(username))
     }
 
-    @Transactional(readOnly = true)
     override fun getUserByUserId(userId: Long): UserEntity {
-        return userRepository.findById(userId).orElseThrow(NotFoundException(String.format("User %d cannot be found", userId)))
+        return userRepository
+            .findById(userId)
+            .orElseThrow(NotFoundException(String.format("User %d cannot be found", userId)))
     }
 
-    @Transactional(readOnly = true)
     override fun getUserByUsername(username: String): UserEntity {
-        return userRepository.findByUsername(username) ?: throw NotFoundException(String.format("User %s cannot be found", username))
+        return userRepository
+            .findByUsername(username)
+            ?: throw NotFoundException(String.format("User %s cannot be found", username))
     }
 
-    @Transactional(readOnly = true)
     override fun getUsers(pageable : Pageable): Page<UserEntity> {
         return userRepository.findAll(pageable)
     }
 
-    @Transactional(readOnly = true)
     override fun authenticate(username : String, password : String): String {
-        // Try to authenticate the user with username and password
         val authentication = authenticationManager.authenticate(
-                UsernamePasswordAuthenticationToken(username, password))
+            UsernamePasswordAuthenticationToken(username, password)
+        )
 
-        // Set the Security context with the authentication
         SecurityContextHolder.getContext().authentication = authentication
 
-        // Generate and return the JWT Token
         return jwtUtils.generateJwtToken(authentication)
     }
 
-    override fun me(): UserDetails {
+    override fun me(): UserSecurity {
         val authentication = SecurityContextHolder.getContext().authentication
-        return if (authentication.principal is UserDetails) {
-            authentication.principal as UserDetails
+        return if (authentication.principal is UserSecurity) {
+            authentication.principal as UserSecurity
         } else {
             throw AccessDeniedException("User not authenticated")
         }
@@ -88,7 +75,7 @@ class SecurityServiceImpl(
             throw UserAlreadyExistsException()
         }
 
-        val user = UserEntity(id = null, username = username, email = email, password = encoder.encode(password), roles = emptyList())
+        val user = UserEntity(id = null, username = username, email = email, password = encoder.encode(password), roles = Collections.emptyList())
 
         // Adding the USER role
         user.roles = listOf(
@@ -100,8 +87,8 @@ class SecurityServiceImpl(
 
     override fun updateUser(email: String, password: String): UserEntity {
         val authentication = SecurityContextHolder.getContext().authentication
-        if (authentication.principal is UserDetails) {
-            val authDetails = authentication.principal as UserDetails
+        if (authentication.principal is UserSecurity) {
+            val authDetails = authentication.principal as UserSecurity
             val myUser = getUserByUsername(username = authDetails.username)
             myUser.email = email
             myUser.password = encoder.encode(password)
@@ -110,7 +97,6 @@ class SecurityServiceImpl(
         throw IllegalArgumentException("Cannot update user details")
     }
 
-    @Transactional(readOnly = true)
     override fun findAllRolesByUsername(username: String): List<RoleEntity> {
         return roleRepository.findAllByUser_Username(username)
     }
@@ -121,25 +107,5 @@ class SecurityServiceImpl(
 
     private fun userExists(username: String, email: String): Boolean {
         return userRepository.existsByUsernameOrEmail(username, email)
-    }
-
-    private fun toUserDetails(userEntity: UserEntity): UserDetails {
-        val roles = userEntity.roles
-            .filter { nonNull(it) }
-            .map { it.role }
-            .toList()
-
-
-        val authorities = roles
-                .map { SimpleGrantedAuthority(ROLE_PREFIX + it) }
-                .toList()
-
-        return UserDetails(
-            userEntity.username,
-            userEntity.password,
-            authorities,
-            roles,
-            userEntity.email
-        )
     }
 }

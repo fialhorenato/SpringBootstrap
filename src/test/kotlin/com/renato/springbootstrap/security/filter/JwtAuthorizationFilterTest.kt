@@ -1,6 +1,6 @@
 package com.renato.springbootstrap.security.filter
 
-import com.renato.springbootstrap.security.service.UserDetails
+import com.renato.springbootstrap.security.domain.UserSecurity
 import com.renato.springbootstrap.security.utils.JwtUtils
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
@@ -23,7 +23,7 @@ class JwtAuthorizationFilterTest {
         val request = mock(HttpServletRequest::class.java)
         val response = mock(HttpServletResponse::class.java)
         val filterChain = mock(FilterChain::class.java)
-        val userDetails = UserDetails("username", "password", emptyList(), emptyList(), "email")
+        val userDetails = UserSecurity(0L, "username", "password", "email", emptyList(), emptyList())
 
         `when`(request.getHeader("Authorization")).thenReturn("Bearer token.token.token.token")
         `when`(jwtUtils.validateJwtToken("token.token.token.token")).thenReturn(true)
