@@ -8,6 +8,17 @@ on:
     branches: [ main ]
 
 jobs:
+  clean:
+    runs-on: ubuntu-latest
+    name: Delete old images gcr.io
+    steps:
+      - uses: snok/container-retention-policy@v3.0.0
+        with:
+          account: fialhorenato
+          token: ${{ secrets.CR_PAT }}
+          image-names: "*"
+          cut-off: 2w
+          dry-run: false
   test:
     runs-on: ubuntu-latest
     steps:
