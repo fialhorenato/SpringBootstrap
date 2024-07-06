@@ -1,19 +1,19 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    	val kotlinVersion = "2.0.0"
-    	id("org.springframework.boot") version "3.3.1"
-    	id("io.spring.dependency-management") version "1.1.5"
-	id ("de.undercouch.download") version "3.4.3"
-    	kotlin("jvm") version kotlinVersion
-    	kotlin("plugin.spring") version kotlinVersion
+	val kotlinVersion = "2.0.0"
+	id("org.springframework.boot") version "3.3.1"
+	id("io.spring.dependency-management") version "1.1.5"
+	kotlin("jvm") version kotlinVersion
+	kotlin("plugin.spring") version kotlinVersion
 	kotlin("plugin.jpa") version kotlinVersion
-    	jacoco
+	jacoco
 }
 
 group = "com.renato"
 version = "0.0.1-SNAPSHOT"
-java.sourceCompatibility = JavaVersion.VERSION_17
+java.sourceCompatibility = JavaVersion.VERSION_21
 
 val nimbusJose4jVersion = "9.40"
 val springDocVersion = "2.6.0"
@@ -21,17 +21,6 @@ val postgreSQLVersion = "42.7.3"
 val newRelicJava = "8.12.0"
 val liquibaseVersion = "4.28.0"
 val h2databaseVersion = "2.2.224"
-
-
-tasks.register<de.undercouch.gradle.tasks.download.Download>("downloadNewrelic") {
-	mkdir("newrelic")
-	src("https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-java.zip")
-	dest(file("newrelic"))
-}
-tasks.register<Copy>("unzipNewrelic") {
-	from(zipTree(file("newrelic/newrelic-java.zip")))
-	into(rootDir)
-}
 
 repositories {
 	mavenCentral()
@@ -42,7 +31,7 @@ tasks.jacocoTestReport {
 		xml.required.set(true)
 		csv.required.set(true)
 		html.required.set(true)
-		html.outputLocation.set(file("$buildDir/reports/coverage"))
+		html.outputLocation.set(File("${layout.buildDirectory.get().asFile}/reports/coverage"))
 	}
 }
 
@@ -70,9 +59,9 @@ dependencies {
 
 
 tasks.withType<KotlinCompile> {
-	kotlinOptions {
-		freeCompilerArgs = listOf("-Xjsr305=strict")
-		jvmTarget = "17"
+	compilerOptions {
+		freeCompilerArgs.add("-Xjsr305=strict")
+		jvmTarget.set(JvmTarget.JVM_21)
 	}
 }
 

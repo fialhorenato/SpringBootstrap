@@ -1,4 +1,4 @@
-package com.renato.springbootstrap.security.exception.handler
+package com.renato.springbootstrap.exception
 
 import com.renato.springbootstrap.api.response.GeneralFailureResponse
 import com.renato.springbootstrap.security.exception.UserAlreadyExistsException
@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 
 @RestControllerAdvice
-class ErrorHandler {
-    private val logger: Logger = LoggerFactory.getLogger(ErrorHandler::class.java)
+class ExceptionHandler {
+    private val logger: Logger = LoggerFactory.getLogger(ExceptionHandler::class.java)
 
     @ExceptionHandler(AccessDeniedException::class)
     fun handle(ex: AccessDeniedException): ResponseEntity<Any> {
