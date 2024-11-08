@@ -76,13 +76,12 @@ class UserServiceImpl (
         }
 
         val user = UserEntity(id = null, username = username, email = email, password = encoder.encode(password), roles = Collections.emptyList())
+        val savedUser = userRepository.save(user);
+        val role = addRole(userEntity = savedUser);
 
-        // Adding the USER role
-        user.roles = listOf(
-            toRole(userEntity =  user)
-        )
 
-        return userRepository.save(user)
+
+        return savedUser.copy(roles = listOf(role));
     }
 
     override fun updateUser(email: String, password: String): UserEntity {
@@ -90,9 +89,8 @@ class UserServiceImpl (
         if (authentication.principal is UserSecurity) {
             val authDetails = authentication.principal as UserSecurity
             val myUser = getUserByUsername(username = authDetails.username)
-            myUser.email = email
-            myUser.password = encoder.encode(password)
-            return userRepository.save(myUser)
+            val updatedUser = myUser.copy(email = email, password = encoder.encode(password));
+            return userRepository.save(updatedUser)
         }
         throw IllegalArgumentException("Cannot update user details")
     }
@@ -101,8 +99,10 @@ class UserServiceImpl (
         return roleRepository.findAllByUser_Username(username)
     }
 
-    private fun toRole(role: String = "USER", userEntity: UserEntity): RoleEntity {
-        return RoleEntity(null, userEntity, role)
+    private fun addRole(role: String = "USER", userEntity: UserEntity): RoleEntity {
+        return roleRepository.save(
+            RoleEntity(id = null, userEntity, role)
+        )
     }
 
     private fun userExists(username: String, email: String): Boolean {

@@ -1,6 +1,7 @@
 package com.renato.springbootstrap.security.service
 
 import com.renato.springbootstrap.exception.NotFoundException
+import com.renato.springbootstrap.factory.RoleFactory
 import com.renato.springbootstrap.factory.UserFactory
 import com.renato.springbootstrap.security.domain.UserSecurity
 import com.renato.springbootstrap.security.entity.RoleEntity
@@ -167,9 +168,11 @@ class SecurityServiceTest {
     @DisplayName("Create user sanity")
     fun createUserSanity() {
         val user = UserFactory.generateUser()
+        val role = RoleFactory.generateRole(user)
         Mockito.`when`(encoder.encode(user.password)).thenReturn("passwordEncoded")
         Mockito.`when`(userRepository.existsByUsernameOrEmail(user.username, user.email)).thenReturn(false)
         Mockito.`when`(userRepository.save(Mockito.any(UserEntity::class.java))).thenReturn(user)
+        Mockito.`when`(roleRepository.save(Mockito.any(RoleEntity::class.java))).thenReturn(role)
         assertDoesNotThrow { securityService.createUser(user.username, user.password, user.email) }
     }
 
