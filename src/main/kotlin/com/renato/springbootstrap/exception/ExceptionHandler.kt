@@ -1,6 +1,7 @@
 package com.renato.springbootstrap.exception
 
 import com.renato.springbootstrap.api.response.GeneralFailureResponse
+import com.renato.springbootstrap.security.exception.JwtException
 import com.renato.springbootstrap.security.exception.UserAlreadyExistsException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -41,7 +42,7 @@ class ExceptionHandler {
 
     @ExceptionHandler(RuntimeException::class)
     fun handle(ex: RuntimeException): ResponseEntity<Any> {
-        logger.error(ex.localizedMessage,ex)
+        logger.error(ex.localizedMessage, ex)
         return ResponseEntity(generateErrorResponse(ex.localizedMessage), HttpStatus.INTERNAL_SERVER_ERROR)
     }
 

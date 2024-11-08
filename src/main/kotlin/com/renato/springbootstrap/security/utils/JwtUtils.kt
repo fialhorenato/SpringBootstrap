@@ -9,6 +9,7 @@ import com.nimbusds.jose.crypto.MACSigner
 import com.nimbusds.jose.crypto.MACVerifier
 import com.nimbusds.jwt.JWTClaimsSet
 import com.renato.springbootstrap.security.domain.UserSecurity
+import com.renato.springbootstrap.security.exception.JwtException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -95,8 +96,8 @@ class JwtUtils {
         return try {
             val verifier = MACVerifier(jwtSecret)
             JWSObject.parse(authToken).verify(verifier)
-        } catch (e: JOSEException) {
-            logger.error("Invalid JWT token: {}", e.message, e)
+        } catch (ex: Exception) {
+            logger.error("Invalid JWT token: {}", ex.message, ex)
             false
         }
     }

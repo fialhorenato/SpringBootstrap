@@ -10,22 +10,22 @@ import java.time.Instant
 data class UserEntity (
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        var id : Long? = null,
+        val id : Long? = null,
 
-        var username : String,
+        val username : String,
 
-        var email : String,
+        val email : String,
 
-        var password : String,
+        val password : String,
 
         @OneToMany(cascade = [CascadeType.ALL], mappedBy = "user")
-        var roles : List<RoleEntity>,
+        val roles : List<RoleEntity>,
 
         @CreatedDate
         @Column(name = "created_at")
-        var createdAt : Instant? = Instant.now(),
+        val createdAt : Instant? = Instant.now(),
 
         @LastModifiedDate
         @Column(name = "updated_at")
-        var updatedAt : Instant? = Instant.now()
+        val updatedAt : Instant? = Instant.now()
 )

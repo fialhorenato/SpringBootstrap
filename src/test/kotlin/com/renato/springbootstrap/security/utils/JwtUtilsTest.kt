@@ -57,7 +57,8 @@ class JwtUtilsTest {
 
         // Assertions
         assertDoesNotThrow { jwtUtils.validateJwtToken(token) }
-        assertThrows<ParseException>{jwtUtils.validateJwtToken("notAToken")}
+        assertThat(jwtUtils.validateJwtToken("notAToken")).isFalse
+        assertThat(jwtUtils.validateJwtToken(token)).isTrue
         assertThat(jwtUtils.validateJwtToken(TOKEN)).isFalse
     }
 
