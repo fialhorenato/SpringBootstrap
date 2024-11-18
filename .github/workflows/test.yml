@@ -25,7 +25,7 @@ jobs:
       - name: Code Coverage
         run: ./gradlew jacocoTestReport
       - name: Send report to codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
       - name: Build the tagged Docker image
