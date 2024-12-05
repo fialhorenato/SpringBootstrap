@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping(value = ["/security/admin"])
 @Secured("ROLE_ADMIN")
 class SecurityAdminController(private val userService: UserService) {
-
     @PostMapping("/user/{username}/role/{role}")
     fun addRole(@PathVariable(value = "username") username : String, @PathVariable(value = "role") role : String) : ResponseEntity<Any> {
         userService.addRole(username, role)
@@ -50,5 +49,4 @@ class SecurityAdminController(private val userService: UserService) {
         val user = userService.updateUser(email = updateUserRequestDTO.email, password = updateUserRequestDTO.password)
         return userService.authenticate(username = user.username, password = updateUserRequestDTO.password)
     }
-
 }
