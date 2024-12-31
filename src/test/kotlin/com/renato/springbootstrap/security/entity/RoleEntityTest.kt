@@ -20,9 +20,10 @@ class RoleEntityTest {
     @Test
     fun saveSanity() {
         val user = generateUser()
-        val userSaved = userRepository.save(user)
-        val role = generateRole(userSaved)
+        userRepository.save(user)
+        val role = generateRole(user)
         val roleSaved = roleRepository.save(role)
+        assertThat(roleSaved.user).isEqualTo(user)
         assertThat(roleSaved).isNotNull
     }
 
