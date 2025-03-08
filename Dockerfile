@@ -1,4 +1,4 @@
-FROM amazoncorretto:21 as builder
+FROM openjdk:21-oraclelinux8 as builder
 
 USER root
 
@@ -16,7 +16,7 @@ USER app
 
 # Now it is time for us to build our real image on top of an alpine version of it
 
-FROM amazoncorretto:21-alpine
+FROM redhat/ubi8-minimal:8.10-1179.1739286367
 COPY --from=builder /opt/jre-minimal /opt/jre-minimal
 
 ENV JAVA_HOME=/opt/jre-minimal
