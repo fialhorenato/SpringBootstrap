@@ -8,7 +8,8 @@ on:
     branches: [ main ]
 
 permissions : write-all
-
+env:
+  FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -40,3 +41,9 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Push to Docker Github
         run: docker push ghcr.io/fialhorenato/springbootstrap:latest
+      - name: Configure fly.io
+        uses: superfly/flyctl-actions/setup-flyctl@master
+      - name: Run the docker config
+        run: flyctl auth docker
+      - name: Push to fly.io Docker Registry
+        run: docker push registry.fly.io/spring-bootstrap:master-${BUILD_NUMBER}
