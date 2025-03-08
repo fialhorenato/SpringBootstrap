@@ -33,6 +33,10 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
       - name: Build the tagged Docker image
         run: docker build . --tag ghcr.io/fialhorenato/springbootstrap:latest
+      - name: Build the tagged Docker image
+        run: docker build . --tag registry.fly.io/spring-bootstrap:${{ github.sha }}
+      - name: Build the tagged Docker image
+        run: docker build . --tag registry.fly.io/spring-bootstrap:latest
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -46,4 +50,6 @@ jobs:
       - name: Run the docker config
         run: flyctl auth docker
       - name: Push to fly.io Docker Registry
-        run: docker push registry.fly.io/spring-bootstrap:master-${BUILD_NUMBER}
+        run: docker push registry.fly.io/spring-bootstrap:${{ github.sha }}
+      - name: Push to fly.io Docker Registry
+        run: docker push registry.fly.io/spring-bootstrap:latest
