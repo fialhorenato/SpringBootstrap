@@ -1,4 +1,4 @@
-FROM openjdk:21-oraclelinux8 as builder
+FROM openjdk:25-oraclelinux8 as builder
 
 USER root
 
