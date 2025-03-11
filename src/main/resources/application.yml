@@ -16,7 +16,7 @@ springdoc:
     path: /api-docs
 management:
   server:
-    port: 8081
+    port: ${PORT:8080}
   endpoint:
     metrics:
       enabled: false
