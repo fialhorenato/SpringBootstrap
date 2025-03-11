@@ -1,31 +1,35 @@
-FROM amazoncorretto:21 as builder
+FROM gradle:8-jdk21-alpine AS builder
 
-USER root
+WORKDIR /build
+COPY /build/libs/app.jar app.jar
+
+RUN jar xf app.jar
+
+RUN jdeps --ignore-missing-deps -q  \
+    --recursive  \
+    --multi-release 21  \
+    --print-module-deps  \
+    --class-path 'BOOT-INF/lib/*'  \
+    app.jar > deps.info
 
 RUN jlink \
-    --module-path "$JAVA_HOME/jmods" \
-    --add-modules java.compiler,java.sql,java.naming,java.management,java.instrument,java.rmi,java.desktop,jdk.internal.vm.compiler.management,java.xml.crypto,java.scripting,java.security.jgss,jdk.httpserver,java.net.http,jdk.naming.dns,jdk.crypto.cryptoki,jdk.unsupported \
-    --verbose \
+    --add-modules $(cat deps.info) \
     --strip-debug \
     --compress 2 \
     --no-header-files \
     --no-man-pages \
-    --output /opt/jre-minimal
+    --output jre-custom
 
-USER app
+# reduce image size a little bit more (-4MB)
+RUN strip -p --strip-unneeded jre-custom/lib/server/libjvm.so && \
+   find jre-custom -name '*.so' | xargs -i strip -p --strip-unneeded {}
 
-# Now it is time for us to build our real image on top of an alpine version of it
+FROM alpine:latest
+WORKDIR /deployment
 
-FROM amazoncorretto:21-alpine
-COPY --from=builder /opt/jre-minimal /opt/jre-minimal
+COPY --from=builder /build/jre-custom jre-custom/
+COPY --from=builder /build/app.jar build/app.jar
 
-ENV JAVA_HOME=/opt/jre-minimal
-ENV PATH="$PATH:$JAVA_HOME/bin"
+CMD ["jre-custom/bin/java","-jar","build/app.jar"]
 
-VOLUME /tmp
-
-# Copy the JRE created in the last step into our $JAVA_HOME
-
-COPY build/libs/app.jar app.jar
-
-ENTRYPOINT ["java","-jar","/app.jar"]
+EXPOSE 8080
