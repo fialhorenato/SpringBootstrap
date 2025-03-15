@@ -1,0 +1,6 @@
+spring:
+  datasource:
+    url: jdbc:${DATABASE_URL}
+  config:
+    activate:
+      on-profile: render
