@@ -74,6 +74,7 @@ tasks.bootJar {
 	archiveVersion.set("")
 }
 
-tasks.withType<Test> {
+tasks.test {
 	useJUnitPlatform()
+	jvmArgs = listOf("-Xshare:off")
 }
