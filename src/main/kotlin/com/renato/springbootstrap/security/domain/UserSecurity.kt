@@ -2,9 +2,11 @@ package com.renato.springbootstrap.security.domain
 
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.User
+import java.util.UUID
 
 class UserSecurity(
     val id: Long?,
+    val userId: UUID,
     username: String,
     password: String,
     val email: String,

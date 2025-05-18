@@ -27,6 +27,7 @@ class JwtUtils {
         const val EMAIL_CLAIM = "email"
         const val ROLES_CLAIM = "roles"
         const val PASSWORD_CLAIM = "password"
+        const val USER_ID_CLAIM = "user_id"
     }
 
     private val logger: Logger = LoggerFactory.getLogger(JwtUtils::class.java)
@@ -54,6 +55,7 @@ class JwtUtils {
             .claim(EMAIL_CLAIM, userPrincipal.email)
             .claim(ROLES_CLAIM, userPrincipal.roles)
             .claim(PASSWORD_CLAIM, userPrincipal.password)
+            .claim(USER_ID_CLAIM, userPrincipal.userId)
             .expirationTime(Date(Date().time + jwtExpirationMs))
             .issueTime(Date())
             .subject(userPrincipal.username)
@@ -72,6 +74,11 @@ class JwtUtils {
         return JWSObject.parse(token).payload.toJSONObject()[EMAIL_CLAIM].toString()
     }
 
+    private fun getUserIdFromJwtToken(token: String): UUID {
+        val userId = JWSObject.parse(token).payload.toJSONObject()[USER_ID_CLAIM].toString()
+        return UUID.fromString(userId)
+    }
+
     fun getRolesFromJwtToken(token: String): List<String> {
         val roles = JWSObject.parse(token).payload.toJSONObject()[ROLES_CLAIM] as List<*>
         return roles.filterIsInstance<String>().map {it}
@@ -85,11 +92,12 @@ class JwtUtils {
 
     fun toUserDetails(token : String): UserSecurity {
         val username: String = getUserNameFromJwtToken(token)
+        val userId : UUID = getUserIdFromJwtToken(token)
         val email = getEmailFromJwtToken(token)
         val password = getPasswordFromJwtToken(token)
         val authorities = getAuthoritiesFromJwtToken(token)
         val roles = getRolesFromJwtToken(token)
-        return UserSecurity(null, username, password, email, authorities, roles)
+        return UserSecurity(null, userId, username, password, email, authorities, roles)
     }
 
     fun validateJwtToken(authToken: String): Boolean {

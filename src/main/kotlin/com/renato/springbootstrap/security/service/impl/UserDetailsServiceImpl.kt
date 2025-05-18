@@ -16,6 +16,7 @@ class UserDetailsServiceImpl(
         return userRepository.findByUsername(username)
             ?.let { UserSecurity(
                 it.id,
+                it.userId,
                 it.username,
                 it.password,
                 it.email,

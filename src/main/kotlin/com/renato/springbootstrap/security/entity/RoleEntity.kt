@@ -2,6 +2,7 @@ package com.renato.springbootstrap.security.entity
 
 import jakarta.persistence.*
 import java.time.Instant
+import java.util.UUID
 
 @Entity
 @Table(name = "roles",
@@ -11,6 +12,9 @@ data class RoleEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null,
+
+    @Column(name = "role_id", unique = true)
+    var roleId: UUID,
 
     @ManyToOne(fetch = FetchType.LAZY)
     var user: UserEntity,

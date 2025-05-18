@@ -14,6 +14,11 @@ databaseChangeLog:
                     primaryKey: true
                     nullable: false
               - column:
+                  name: user_id
+                  type: UUID
+                  constraints:
+                    unique: true
+              - column:
                   name: username
                   type: varchar(20)
                   constraints:
@@ -46,6 +51,11 @@ databaseChangeLog:
                   constraints:
                     primaryKey: true
                     nullable: false
+              - column:
+                  name: role_id
+                  type: uuid
+                  constraints:
+                    unique: true
               - column:
                   name: user_id
                   type: bigint

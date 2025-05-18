@@ -28,7 +28,11 @@ class UserServiceImpl (
     private val authenticationManager: AuthenticationManager
 ) : UserService {
     override fun addRole(username: String, role: String) {
-        roleRepository.save(RoleEntity(role = role, user = getUserByUsername(username)))
+        roleRepository.save(RoleEntity(
+            roleId = UUID.randomUUID(),
+            role = role,
+            user = getUserByUsername(username))
+        )
     }
 
     override fun removeRole(username: String, role: String) {
@@ -75,7 +79,15 @@ class UserServiceImpl (
             throw UserAlreadyExistsException()
         }
 
-        val user = UserEntity(id = null, username = username, email = email, password = encoder.encode(password), roles = Collections.emptyList())
+        val user = UserEntity(
+            id = null,
+            userId = UUID.randomUUID(),
+            username = username,
+            email = email,
+            password = encoder.encode(password),
+            roles = Collections.emptyList()
+        )
+        
         val savedUser = userRepository.save(user);
         val role = addRole(userEntity = savedUser);
 
@@ -101,7 +113,12 @@ class UserServiceImpl (
 
     private fun addRole(role: String = "USER", userEntity: UserEntity): RoleEntity {
         return roleRepository.save(
-            RoleEntity(id = null, userEntity, role)
+            RoleEntity(
+                id = null,
+                UUID.randomUUID(),
+                userEntity,
+                role
+            )
         )
     }
 
