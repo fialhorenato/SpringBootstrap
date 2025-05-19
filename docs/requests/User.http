@@ -3,9 +3,9 @@ POST http://localhost:8080/security/signup
 Content-Type: application/json
 
 {
-  "email": "test@test.com.br",
-  "username": "test",
-  "password": "test"
+  "email": "teste",
+  "username": "teste",
+  "password": "teste"
 }
 
 ### User login
@@ -13,8 +13,8 @@ POST http://localhost:8080/security/login
 Content-Type: application/json
 
 {
-  "username": "test",
-  "password": "test"
+  "username": "teste",
+  "password": "teste"
 }
 
 > {% client.global.set("auth_token", response.body); %}

@@ -12,6 +12,7 @@ import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito.*
 import org.mockito.junit.jupiter.MockitoExtension
+import java.util.UUID
 
 @ExtendWith(MockitoExtension::class)
 class JwtAuthorizationFilterTest {
@@ -23,7 +24,7 @@ class JwtAuthorizationFilterTest {
         val request = mock(HttpServletRequest::class.java)
         val response = mock(HttpServletResponse::class.java)
         val filterChain = mock(FilterChain::class.java)
-        val userDetails = UserSecurity(0L, "username", "password", "email", emptyList(), emptyList())
+        val userDetails = UserSecurity(0L, UUID.randomUUID(),"username", "password", "email", emptyList(), emptyList())
 
         `when`(request.getHeader("Authorization")).thenReturn("Bearer token.token.token.token")
         `when`(jwtUtils.validateJwtToken("token.token.token.token")).thenReturn(true)

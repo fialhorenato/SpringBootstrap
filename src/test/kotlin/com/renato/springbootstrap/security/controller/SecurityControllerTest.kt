@@ -12,6 +12,7 @@ import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito.*
 import org.mockito.junit.jupiter.MockitoExtension
+import java.util.UUID
 
 @ExtendWith(MockitoExtension::class)
 class SecurityControllerTest {
@@ -44,7 +45,7 @@ class SecurityControllerTest {
 
     @Test
     fun meMustDelegateToService() {
-        `when`(securityService.me()).thenReturn(UserSecurity(0L, "username", "password", "email", emptyList(), emptyList()))
+        `when`(securityService.me()).thenReturn(UserSecurity(0L, UUID.randomUUID(),"username", "password", "email", emptyList(), emptyList()))
         securityController.me()
         verify(securityService).me()
     }

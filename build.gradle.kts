@@ -13,13 +13,17 @@ plugins {
 
 group = "com.renato"
 version = "0.0.1-SNAPSHOT"
-java.sourceCompatibility = JavaVersion.VERSION_21
+val javaJvmTarget = JvmTarget.JVM_21
+val javaVersion = JavaVersion.VERSION_21
 
+java.sourceCompatibility = javaVersion
 val nimbusJose4jVersion = "10.3"
 val springDocVersion = "2.8.8"
 val postgreSQLVersion = "42.7.5"
 val liquibaseVersion = "4.31.1"
 val h2databaseVersion = "2.3.232"
+val mockitoAgent = configurations.create("mockitoAgent")
+
 
 repositories {
 	mavenCentral()
@@ -56,14 +60,15 @@ dependencies {
 	runtimeOnly("com.h2database:h2:$h2databaseVersion")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")
-
+	testImplementation("org.mockito:mockito-core:5.11.0")
+	testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
+	testImplementation("org.mockito:mockito-junit-jupiter:5.11.0")
 }
-
 
 tasks.withType<KotlinCompile> {
 	compilerOptions {
 		freeCompilerArgs.add("-Xjsr305=strict")
-		jvmTarget.set(JvmTarget.JVM_23)
+		jvmTarget.set(javaJvmTarget)
 	}
 }
 
@@ -74,5 +79,5 @@ tasks.bootJar {
 
 tasks.test {
 	useJUnitPlatform()
-	jvmArgs = listOf("-Xshare:off")
+	jvmArgs = listOf("-Xshare:off", "-XX:+EnableDynamicAgentLoading")
 }

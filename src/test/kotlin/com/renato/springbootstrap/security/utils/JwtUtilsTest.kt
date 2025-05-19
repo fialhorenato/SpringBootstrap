@@ -10,6 +10,7 @@ import org.mockito.InjectMocks
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import java.text.ParseException
+import java.util.UUID
 
 @ExtendWith(MockitoExtension::class)
 class JwtUtilsTest {
@@ -18,7 +19,7 @@ class JwtUtilsTest {
     lateinit var jwtUtils: JwtUtils
     
     companion object{
-        const val TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0ZSIsInBhc3N3b3JkIjoiJDJhJDEwJDlxR1pNVDZaODlUcUs4bDUzRjh6d2VjVEthZEtUNWt2b2ttY1ozMzc5UEd1SzYucEU5VURxIiwicm9sZXMiOlsiVVNFUiJdLCJleHAiOjE2MTM5Mjk5NzQsImlhdCI6MTYxMzg0MzU3NCwiZW1haWwiOiJ0ZXN0ZSJ9.zSoDviicxcuzTQAkodsnvwonp9Xj5jrvGFyHuT6mjD4"
+        const val TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0ZSIsImV4cCI6MTc0NzcwMjg1MiwidXNlcl9pZCI6Ijk4ZGE4YzYwLWU4NTctNDMwYy1hZWU3LTRhN2YyNWRhZTEzZiIsImlhdCI6MTc0NzYxNjQ1MiwiZW1haWwiOiJ0ZXN0ZSIsInJvbGVzIjpbIlVTRVIiXX0.WzQYstTB-pijxstUothFW0se6ZSl2i2mMMtMVdvRZmY"
     }
     
     @Test
@@ -34,7 +35,7 @@ class JwtUtilsTest {
     fun generateJwtTokenSanity() {
         jwtUtils.jwtSecret = "95605770-21fe-43da-9986-8506693c1327"
         jwtUtils.jwtExpirationMs = 86400000
-        val principal = UserSecurity(1L, "username", "password", "email", emptyList(), emptyList())
+        val principal = UserSecurity(1L, UUID.randomUUID(),"username", "password", "email", emptyList(), emptyList())
         val authentication = UsernamePasswordAuthenticationToken(principal, "password", emptyList())
         assertDoesNotThrow { jwtUtils.generateJwtToken(authentication) }
     }
@@ -51,7 +52,7 @@ class JwtUtilsTest {
     fun validateJwtTokenSanity() {
         jwtUtils.jwtSecret = "95605770-21fe-43da-9986-8506693c1327"
         jwtUtils.jwtExpirationMs = 86400000
-        val principal = UserSecurity(1L, "username", "password", "email", emptyList(), emptyList())
+        val principal = UserSecurity(1L, UUID.randomUUID(),"username", "password", "email", emptyList(), emptyList())
         val authentication = UsernamePasswordAuthenticationToken(principal, "password", emptyList())
         val token = jwtUtils.generateJwtToken(authentication)
 
@@ -65,7 +66,7 @@ class JwtUtilsTest {
     @Test
     fun validateJwtTokenWithoutSecretSanity() {
         jwtUtils.jwtExpirationMs = 86400000
-        val principal = UserSecurity(1L, "username", "password", "email", emptyList(), emptyList())
+        val principal = UserSecurity(1L, UUID.randomUUID(),"username", "password", "email", emptyList(), emptyList())
         val authentication = UsernamePasswordAuthenticationToken(principal, "password", emptyList())
 
         // Assertions
@@ -76,7 +77,7 @@ class JwtUtilsTest {
     fun validateInvalidSecretWithoutSecretSanity() {
         jwtUtils.jwtExpirationMs = 86400000
         jwtUtils.jwtSecret = "šššššššš"
-        val principal = UserSecurity(1L, "username", "password", "email", emptyList(), emptyList())
+        val principal = UserSecurity(1L, UUID.randomUUID(),"username", "password", "email", emptyList(), emptyList())
         UsernamePasswordAuthenticationToken(principal, "password", emptyList())
 
         // Assertions
@@ -89,7 +90,7 @@ class JwtUtilsTest {
     fun validateEmptySecretWithoutSecretSanity() {
         jwtUtils.jwtExpirationMs = 86400000
         jwtUtils.jwtSecret = ""
-        val principal = UserSecurity(1L, "username", "password", "email", emptyList(), emptyList())
+        val principal = UserSecurity(1L, UUID.randomUUID(), "username", "password", "email", emptyList(), emptyList())
         UsernamePasswordAuthenticationToken(principal, "password", emptyList())
 
         // Assertions

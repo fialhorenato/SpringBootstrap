@@ -110,7 +110,7 @@ class SecurityServiceTest {
     @Test
     @DisplayName("Authentication sanity")
     fun authenticateSanity() {
-        val principal = UserSecurity(1L, "username", "password", "email", emptyList(), emptyList())
+        val principal = UserSecurity(1L, UUID.randomUUID(), "username", "password", "email", emptyList(), emptyList())
         val authentication = UsernamePasswordAuthenticationToken(principal, "password", emptyList())
         Mockito.`when`(authenticationManager.authenticate(Mockito.any(UsernamePasswordAuthenticationToken::class.java))).thenReturn(authentication)
         securityService.authenticate("username", "password")
@@ -120,7 +120,7 @@ class SecurityServiceTest {
     @Test
     @DisplayName("Me sanity")
     fun meSanity() {
-        val principal = UserSecurity(1L, "username", "password", "email", emptyList(), emptyList())
+        val principal = UserSecurity(1L, UUID.randomUUID(), "username", "password", "email", emptyList(), emptyList())
         val authentication = UsernamePasswordAuthenticationToken(principal, "password", emptyList())
         SecurityContextHolder.getContext().authentication = authentication
         assertDoesNotThrow { securityService.me() }
@@ -131,7 +131,7 @@ class SecurityServiceTest {
     fun updateSanity() {
         // Given
         val user = UserFactory.generateUser()
-        val principal = UserSecurity(1L, "username", "password", "email", emptyList(), emptyList())
+        val principal = UserSecurity(1L, UUID.randomUUID(),"username", "password", "email", emptyList(), emptyList())
         val authentication = UsernamePasswordAuthenticationToken(principal, "password", emptyList())
 
         // When
