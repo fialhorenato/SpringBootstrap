@@ -18,7 +18,6 @@ java.sourceCompatibility = JavaVersion.VERSION_21
 val nimbusJose4jVersion = "10.3"
 val springDocVersion = "2.8.8"
 val postgreSQLVersion = "42.7.5"
-val newRelicJava = "8.20.0"
 val liquibaseVersion = "4.31.1"
 val h2databaseVersion = "2.3.232"
 
@@ -53,7 +52,6 @@ dependencies {
 	implementation("com.nimbusds:nimbus-jose-jwt:$nimbusJose4jVersion")
 	implementation ("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springDocVersion")
 	implementation ("org.postgresql:postgresql:$postgreSQLVersion")
-	implementation("com.newrelic.agent.java:newrelic-java:$newRelicJava")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	runtimeOnly("com.h2database:h2:$h2databaseVersion")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -65,7 +63,7 @@ dependencies {
 tasks.withType<KotlinCompile> {
 	compilerOptions {
 		freeCompilerArgs.add("-Xjsr305=strict")
-		jvmTarget.set(JvmTarget.JVM_21)
+		jvmTarget.set(JvmTarget.JVM_23)
 	}
 }
 
