@@ -60,7 +60,7 @@ dependencies {
 	runtimeOnly("com.h2database:h2:$h2databaseVersion")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")
-	testImplementation("org.mockito:mockito-core:5.17.0")
+	testImplementation("org.mockito:mockito-core:5.18.0")
 	testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
 	testImplementation("org.mockito:mockito-junit-jupiter:5.18.0")
 }
