@@ -3,11 +3,16 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
 	val kotlinVersion = "2.1.21"
-	id("org.springframework.boot") version "3.4.5"
-	id("io.spring.dependency-management") version "1.1.7"
+	val springBootVersion = "3.4.5"
+	val springDependencyVersion = "1.1.7"
+
+	id("org.springframework.boot") version springBootVersion
+	id("io.spring.dependency-management") version springDependencyVersion
+
 	kotlin("jvm") version kotlinVersion
 	kotlin("plugin.spring") version kotlinVersion
 	kotlin("plugin.jpa") version kotlinVersion
+
 	jacoco
 }
 
@@ -22,7 +27,8 @@ val springDocVersion = "2.8.8"
 val postgreSQLVersion = "42.7.5"
 val liquibaseVersion = "4.31.1"
 val h2databaseVersion = "2.3.232"
-val mockitoAgent = configurations.create("mockitoAgent")
+val mockitoVersion = "5.18.0";
+val mockitoKotlinVersion = "5.4.0"
 
 
 repositories {
@@ -60,9 +66,10 @@ dependencies {
 	runtimeOnly("com.h2database:h2:$h2databaseVersion")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")
-	testImplementation("org.mockito:mockito-core:5.18.0")
-	testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
-	testImplementation("org.mockito:mockito-junit-jupiter:5.18.0")
+	testImplementation("org.mockito:mockito-core:$mockitoVersion")
+	testImplementation("org.mockito:mockito-junit-jupiter:$mockitoVersion")
+	testImplementation("org.mockito.kotlin:mockito-kotlin:$mockitoKotlinVersion")
+
 }
 
 tasks.withType<KotlinCompile> {
