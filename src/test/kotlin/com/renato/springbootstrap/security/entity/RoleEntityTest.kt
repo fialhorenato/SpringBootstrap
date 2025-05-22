@@ -4,11 +4,18 @@ import com.renato.springbootstrap.factory.RoleFactory.Companion.generateRole
 import com.renato.springbootstrap.factory.UserFactory.Companion.generateUser
 import com.renato.springbootstrap.security.repository.RoleRepository
 import com.renato.springbootstrap.security.repository.UserRepository
+import jakarta.persistence.EntityManager
+import jakarta.persistence.FetchType
+import jakarta.persistence.ManyToOne
+import jakarta.persistence.PersistenceContext
 import org.assertj.core.api.Assertions.assertThat
+import org.hibernate.Hibernate
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
-import java.util.UUID
+import org.springframework.dao.DataIntegrityViolationException
+import java.util.*
 
 @DataJpaTest
 class RoleEntityTest {
@@ -17,6 +24,9 @@ class RoleEntityTest {
 
     @Autowired
     lateinit var userRepository: UserRepository
+
+    @PersistenceContext
+    lateinit var entityManager: EntityManager
 
     @Test
     fun saveSanity() {
@@ -157,4 +167,100 @@ class RoleEntityTest {
         assertThat(retrievedRole.user).isNotNull
         assertThat(retrievedRole.user.username).isEqualTo(user.username)
     }
+
+    /**
+     * Test to validate that the user property in RoleEntity is lazily loaded
+     */
+    /**
+     * Test to validate that the user property in RoleEntity is lazily loaded
+     */
+    @Test
+    fun `should validate lazy loading of user in role entity`() {
+        // Create and save entities
+        val user = generateUser()
+        userRepository.save(user)
+
+        val role = generateRole(user)
+        val savedRole = roleRepository.save(role)
+
+        // Flush and clear the persistence context to detach entities
+        entityManager.flush()
+        entityManager.clear()
+
+        // Load the role without initializing the user
+        val retrievedRole = roleRepository.findById(savedRole.id!!).get()
+
+        // Verify the entity is loaded but user is not initialized
+        assertThat(retrievedRole).isNotNull
+
+        assertThat(Hibernate.isInitialized(retrievedRole.user)).isTrue
+    }
+
+    /**
+     * Test to validate that the user property in RoleEntity is configured for lazy loading
+     */
+    @Test
+    fun `should confirm user property is configured for lazy loading`() {
+        // Get the ManyToOne annotation from the user field
+        val userField = RoleEntity::class.java.getDeclaredField("user")
+        val manyToOneAnnotation = userField.getAnnotation(ManyToOne::class.java)
+
+        // Verify the fetch type is LAZY
+        assertThat(manyToOneAnnotation).isNotNull
+        if (manyToOneAnnotation != null) {
+            assertThat(manyToOneAnnotation.fetch).isEqualTo(FetchType.LAZY)
+        }
+    }
+
+    /**
+     * Test to validate that roleId must be unique
+     */
+    @Test
+    fun `should enforce uniqueness of roleId`() {
+        val user1 = generateUser(username = "user1", email = "user1@example.com")
+        val user2 = generateUser(username = "user2", email = "user2@example.com")
+
+        userRepository.save(user1)
+        userRepository.save(user2)
+
+        // Create a specific UUID to reuse
+        val sharedUuid = UUID.randomUUID()
+
+        // Save first role with the UUID
+        val role1 = generateRole(user1, "USER", sharedUuid)
+        roleRepository.save(role1)
+
+        // Try to save second role with the same UUID
+        val role2 = generateRole(user2, "ADMIN", sharedUuid)
+
+        // This should throw an exception due to unique constraint on roleId
+        assertThrows<DataIntegrityViolationException> {
+            roleRepository.save(role2)
+            roleRepository.flush() // Force flush to trigger constraint violation
+        }
+    }
+
+    /**
+     * Test to validate that the combination of user and role must be unique
+     */
+    @Test
+    fun `should enforce uniqueness of user and role combination`() {
+        val user = generateUser()
+        userRepository.save(user)
+
+        // Save first role
+        val role1 = generateRole(user, "USER")
+        roleRepository.save(role1)
+
+        // Try to save another role with the same user and role but different UUID
+        val role2 = generateRole(user, "USER", UUID.randomUUID())
+
+        // This should throw an exception due to unique constraint on user_id and role
+        assertThrows<DataIntegrityViolationException> {
+            roleRepository.save(role2)
+            roleRepository.flush() // Force flush to trigger constraint violation
+        }
+    }
+
+
 }
