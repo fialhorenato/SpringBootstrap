@@ -23,7 +23,7 @@ val javaVersion = JavaVersion.VERSION_21
 
 java.sourceCompatibility = javaVersion
 val nimbusJose4jVersion = "10.3"
-val springDocVersion = "2.8.8"
+val springDocVersion = "2.8.9"
 val postgreSQLVersion = "42.7.6"
 val liquibaseVersion = "4.32.0"
 val h2databaseVersion = "2.3.232"
