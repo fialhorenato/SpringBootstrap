@@ -22,7 +22,7 @@ val javaJvmTarget = JvmTarget.JVM_21
 val javaVersion = JavaVersion.VERSION_21
 
 java.sourceCompatibility = javaVersion
-val nimbusJose4jVersion = "10.4.2"
+val nimbusJose4jVersion = "10.5"
 val springDocVersion = "2.8.12"
 val postgreSQLVersion = "42.7.7"
 val liquibaseVersion = "4.33.0"
