@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	val kotlinVersion = "2.2.10"
+	val kotlinVersion = "2.2.20"
 	val springBootVersion = "3.5.5"
 	val springDependencyVersion = "1.1.7"
 
