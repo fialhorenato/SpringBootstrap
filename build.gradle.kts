@@ -27,7 +27,7 @@ val springDocVersion = "2.8.13"
 val postgreSQLVersion = "42.7.8"
 val liquibaseVersion = "4.33.0"
 val h2databaseVersion = "2.3.232"
-val mockitoVersion = "5.19.0";
+val mockitoVersion = "5.20.0";
 val mockitoKotlinVersion = "6.0.0"
 
 
