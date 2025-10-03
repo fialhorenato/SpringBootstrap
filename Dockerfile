@@ -1,4 +1,4 @@
-FROM gradle:9-jdk23-alpine AS builder
+FROM gradle:jdk23-alpine AS builder
 
 WORKDIR /build
 COPY /build/libs/app.jar app.jar
