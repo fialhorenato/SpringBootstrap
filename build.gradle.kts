@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -19,11 +18,12 @@ plugins {
 group = "com.renato"
 version = "0.0.1-SNAPSHOT"
 
-java.toolchain {
-    languageVersion.set(JavaLanguageVersion.of(23))
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(23)
+    }
 }
 
-java.sourceCompatibility = javaVersion
 val nimbusJose4jVersion = "10.5"
 val springDocVersion = "2.8.13"
 val postgreSQLVersion = "42.7.8"
