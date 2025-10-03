@@ -18,8 +18,10 @@ plugins {
 
 group = "com.renato"
 version = "0.0.1-SNAPSHOT"
-val javaJvmTarget = JvmTarget.JVM_21
-val javaVersion = JavaVersion.VERSION_21
+
+java.toolchain {
+    languageVersion.set(JavaLanguageVersion.of(23))
+}
 
 java.sourceCompatibility = javaVersion
 val nimbusJose4jVersion = "10.5"
@@ -75,7 +77,6 @@ dependencies {
 tasks.withType<KotlinCompile> {
 	compilerOptions {
 		freeCompilerArgs.add("-Xjsr305=strict")
-		jvmTarget.set(javaJvmTarget)
 	}
 }
 
