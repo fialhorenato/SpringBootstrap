@@ -39,7 +39,8 @@ jobs:
       - name: Push to Docker Github
         run: docker push ghcr.io/fialhorenato/springbootstrap --all-tags
   cleanup-docker-images:
-    permissions: write-all
+    permissions:
+      packages: write
     needs: build
     runs-on: ubuntu-latest
     steps:
