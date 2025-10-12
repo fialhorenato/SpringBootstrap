@@ -38,3 +38,9 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Push to Docker Github
         run: docker push ghcr.io/fialhorenato/springbootstrap --all-tags
+      - name: Delete old package versions
+        uses: actions/delete-package-versions@v5
+        with:
+          package-name: 'springbootstrap'
+          package-type: 'container'
+          min-versions-to-keep: 10
