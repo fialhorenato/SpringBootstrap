@@ -1,4 +1,4 @@
-FROM gradle:jdk23-alpine AS builder
+FROM gradle:jdk24-alpine AS builder
 
 WORKDIR /build
 COPY /build/libs/app.jar app.jar
@@ -7,7 +7,7 @@ RUN jar xf app.jar
 
 RUN jdeps --ignore-missing-deps -q  \
     --recursive  \
-    --multi-release 23  \
+    --multi-release 24  \
     --print-module-deps  \
     --class-path 'BOOT-INF/lib/*'  \
     app.jar > deps.info
