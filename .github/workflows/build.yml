@@ -29,7 +29,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
       - name: Build the tagged Docker image
-        run: docker build . --tag ghcr.io/fialhorenato/springbootstrap:latest --tag ghcr.io/fialhorenato/springbootstrap:${{ github.sha }}
+        run: docker build . --tag ghcr.io/fialhorenato/springbootstrap:latest --tag ghcr.io/fialhorenato/springbootstrap:${{ github.sha }} --tag registry.fly.io/springbootstrap:${{ github.sha }}
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -45,3 +45,9 @@ jobs:
           package-type: 'container'
           min-versions-to-keep: 10
           token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Login to fly.io
+        uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: flyctl auth docker --access-token ${{ secrets.FLY_API_TOKEN }}
+      - name: Push to fly.io
+        run:  docker push registry.fly.io/springbootstrap --all-tags
+
