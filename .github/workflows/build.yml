@@ -45,9 +45,3 @@ jobs:
           package-type: 'container'
           min-versions-to-keep: 10
           token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Login to fly.io
-        uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: flyctl auth docker --access-token ${{ secrets.FLY_API_TOKEN }}
-      - name: Push to fly.io
-        run:  docker push registry.fly.io/springbootstrap --all-tags
-
