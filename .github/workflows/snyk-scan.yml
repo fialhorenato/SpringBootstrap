@@ -1,7 +1,5 @@
 name: Example workflow using Snyk
-on:
-  pull_request:
-    branches: [ main ]
+on: push
 jobs:
   security:
     runs-on: ubuntu-latest
