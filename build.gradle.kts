@@ -55,7 +55,13 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
+
+    // Pinning versions due to snky CVEs
     implementation("io.undertow:undertow-core:2.3.20.Final")
+    implementation("ch.qos.logback:logback-core:1.5.19")
+    implementation("org.apache.commons:commons-lang3:3.18.0")
+
+
 	implementation("io.micrometer:micrometer-registry-prometheus")	
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.liquibase:liquibase-core:$liquibaseVersion")
