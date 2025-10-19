@@ -21,6 +21,10 @@ jobs:
           cache: 'gradle'
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/gradle@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       - name: Build with Gradle
         run: ./gradlew clean build check
       - name: Code Coverage
