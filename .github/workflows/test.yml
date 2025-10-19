@@ -19,8 +19,8 @@ jobs:
           distribution: 'temurin'
           java-version: '24'
           cache: 'gradle'
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
       - name: Run Snyk to check for vulnerabilities
         uses: snyk/actions/gradle-9-jdk24@master
         continue-on-error: true # To make sure that SARIF upload gets called
