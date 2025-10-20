@@ -58,7 +58,7 @@ dependencies {
 
     // Pinning versions due to snky CVEs
     implementation("io.undertow:undertow-core:2.3.20.Final")
-    implementation("ch.qos.logback:logback-core:1.5.19")
+    implementation("ch.qos.logback:logback-core:1.5.20")
     implementation("org.apache.commons:commons-lang3:3.19.0")
 
 
