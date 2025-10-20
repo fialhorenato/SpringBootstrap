@@ -1,5 +1,7 @@
-name: Example workflow using Snyk
-on: push
+name: Run snky for security coverage
+on:
+  push:
+    branches: [ main ]
 jobs:
   security:
     runs-on: ubuntu-latest
