@@ -5,7 +5,6 @@
 
 The project can be seen running here: https://spring-bootstrap.onrender.com/swagger-ui/index.html
 
-Note: If the link above is unavailable, the Render deployment may be paused or removed. TODO: Confirm current live deployment URL.
 
 ## Overview
 A starter template for building RESTful APIs with Spring Boot and Kotlin. It includes:
@@ -132,4 +131,4 @@ Required repository secrets:
 See SECURITY.md for security policies and practices.
 
 ## License
-No license file found. TODO: Add a LICENSE (e.g., Apache-2.0, MIT) and update this section accordingly.
+This project is licensed under the GNU General Public License v3.0 (GPL-3.0). See the LICENSE file for full terms.
