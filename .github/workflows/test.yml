@@ -31,6 +31,13 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
       - name: Build the tagged Docker image
         run: docker build . --tag ghcr.io/fialhorenato/springbootstrap:latest
+      - name: Run Snyk to check Docker image for vulnerabilities
+        uses: snyk/actions/docker@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          image: ghcr.io/fialhorenato/springbootstrap:latest
+          args: --file=Dockerfile
   auto-approval:
     permissions: write-all
     needs: test
