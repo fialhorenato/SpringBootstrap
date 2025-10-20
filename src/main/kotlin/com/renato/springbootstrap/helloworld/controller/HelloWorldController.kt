@@ -11,12 +11,8 @@ class HelloWorldController {
 
     @GetMapping("/secure")
     @Secured("ROLE_ADMIN")
-    fun helloWorldSecured(): String {
-        return "Hello World with Security"
-    }
+    fun helloWorldSecured(): String = "Hello World with Security"
 
     @GetMapping("/insecure")
-    fun helloWorldInsecured(): String {
-        return "Hello World Insecure"
-    }
+    fun helloWorldInsecured(): String = "Hello World Insecure"
 }
