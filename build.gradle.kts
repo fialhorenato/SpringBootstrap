@@ -23,7 +23,7 @@ kotlin {
 }
 
 val nimbusJose4jVersion = "10.5"
-val springDocVersion = "2.8.13"
+val springDocVersion = "2.8.14"
 val postgreSQLVersion = "42.7.8"
 val liquibaseVersion = "5.0.1"
 val h2databaseVersion = "2.4.240"
