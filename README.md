@@ -104,9 +104,10 @@ The CI pipeline also tags images for GHCR as `ghcr.io/fialhorenato/springbootstr
 - settings.gradle.kts — Gradle settings
 - src/main/kotlin — Application source code
   - com.renato.springbootstrap.SpringBootstrapApplication.kt — entry point
-  - security/* — JWT, filters, controllers, services, and entities
-  - helloworld/controller/HelloWorldController.kt — sample endpoints
-  - exception/* — global exception handling
+  - com.renato.springbootstrap.api — External API integrations
+  - com.renato.springbootstrap.security — Security configuration, JWT handling, authentication services
+  - com.renato.springbootstrap.helloworld.controller.HelloWorldController.kt — Sample endpoints
+  - com.renato.springbootstrap.exception — Global exception handling
 - src/main/resources
   - application.yml — default config (H2, ports, JWT)
   - application-render.yml — Render deployment profile
