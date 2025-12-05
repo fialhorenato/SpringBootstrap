@@ -148,7 +148,7 @@ class SecurityServiceTest {
     @DisplayName("Update throw exception")
     fun updateThrowExceptionSanity() {
         // Given
-        val authentication = UsernamePasswordAuthenticationToken(null, "password", emptyList())
+        val authentication = UsernamePasswordAuthenticationToken(null, null)
 
         SecurityContextHolder.getContext().authentication = authentication
 
@@ -159,7 +159,7 @@ class SecurityServiceTest {
     @Test
     @DisplayName("Me not existing sanity")
     fun meNotExistingSanity() {
-        val authentication = UsernamePasswordAuthenticationToken(null, "password", emptyList())
+        val authentication = UsernamePasswordAuthenticationToken(null, null)
         SecurityContextHolder.getContext().authentication = authentication
         assertThrows<AccessDeniedException> { securityService.me() }
     }

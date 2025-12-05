@@ -1,7 +1,7 @@
 package com.renato.springbootstrap.security.config
 
 import com.renato.springbootstrap.security.filter.JwtAuthorizationFilter
-import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest.toAnyEndpoint
+import org.springframework.boot.security.autoconfigure.actuate.web.servlet.EndpointRequest.toAnyEndpoint
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
