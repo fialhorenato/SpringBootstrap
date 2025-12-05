@@ -29,6 +29,7 @@ val liquibaseVersion = "5.0.1"
 val h2databaseVersion = "2.4.240"
 val mockitoVersion = "5.20.0";
 val mockitoKotlinVersion = "6.1.0"
+val mockkVersion = "1.13.10"
 
 
 repositories {
@@ -90,6 +91,8 @@ dependencies {
 	testImplementation("org.mockito:mockito-core:$mockitoVersion")
 	testImplementation("org.mockito:mockito-junit-jupiter:$mockitoVersion")
 	testImplementation("org.mockito.kotlin:mockito-kotlin:$mockitoKotlinVersion")
+    testImplementation("io.mockk:mockk:${mockkVersion}")
+    testImplementation("io.mockk:mockk-jvm:${mockkVersion}")
 
 }
 

@@ -10,16 +10,13 @@ import com.renato.springbootstrap.security.exception.UserAlreadyExistsException
 import com.renato.springbootstrap.security.repository.RoleRepository
 import com.renato.springbootstrap.security.repository.UserRepository
 import com.renato.springbootstrap.security.utils.JwtUtils
-import org.assertj.core.api.Assertions
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertDoesNotThrow
-import org.junit.jupiter.api.assertThrows
+import io.mockk.*
+import io.mockk.impl.annotations.InjectMockKs
+import io.mockk.impl.annotations.MockK
+import io.mockk.junit5.MockKExtension
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.InjectMocks
-import org.mockito.Mock
-import org.mockito.Mockito
-import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.security.access.AccessDeniedException
@@ -29,158 +26,319 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
 import java.util.*
 
-@ExtendWith(MockitoExtension::class)
+@ExtendWith(MockKExtension::class)
 class SecurityServiceTest {
-    @InjectMocks
+    @InjectMockKs
     lateinit var securityService: UserServiceImpl
 
-    @Mock
+    @MockK
     lateinit var userRepository: UserRepository
 
-    @Mock
+    @MockK
     lateinit var encoder: PasswordEncoder
 
-    @Mock
+    @MockK
     lateinit var roleRepository: RoleRepository
 
-    @Mock
+    @MockK
     lateinit var authenticationManager: AuthenticationManager
 
-    @Mock
+    @MockK
     lateinit var jwtUtils: JwtUtils
 
-    @Test
-    @DisplayName("Add role must call the repository once")
-    fun addRoleSanity() {
-        val user = UserFactory.generateUser()
-        Mockito.`when`(userRepository.findByUsername("username")).thenReturn(user)
-        securityService.addRole("username", "ADMIN")
-        Mockito.verify(roleRepository).save(Mockito.any(RoleEntity::class.java))
+    @AfterEach
+    fun tearDown() {
+        SecurityContextHolder.clearContext()
+        clearAllMocks()
     }
 
-    @Test
-    @DisplayName("Remove role must call the repository once")
-    fun removeRoleSanity() {
-        val user = UserFactory.generateUser()
-        Mockito.`when`(userRepository.findByUsername("username")).thenReturn(user)
-        securityService.removeRole("username", "ADMIN")
-        Mockito.verify(roleRepository).deleteByUserAndRole(user = user, role = "ADMIN")
+    @Nested
+    @DisplayName("Add Role Tests")
+    inner class AddRoleTests {
+        @Test
+        @DisplayName("Should successfully add role to existing user")
+        fun addRoleSanity() {
+            // Given
+            val user = UserFactory.generateUser()
+            val expectedRole = RoleFactory.generateRole(user, "ADMIN")
+
+            every { userRepository.findByUsername("username") } returns user
+            every { roleRepository.save(any<RoleEntity>()) } returns expectedRole
+
+            // When
+            securityService.addRole("username", "ADMIN")
+
+            // Then
+            verify(exactly = 1) { 
+                roleRepository.save(match { 
+                    it.role == "ADMIN" && it.user == user 
+                }) 
+            }
+        }
     }
 
-    @Test
-    @DisplayName("Get user by id must not throw error")
-    fun getUserByUserIdSanity() {
-        val user = UserFactory.generateUser()
-        Mockito.`when`(userRepository.findById(1L)).thenReturn(Optional.of(user))
-        assertDoesNotThrow {securityService.getUserByUserId(1L) }
+    @Nested
+    @DisplayName("Remove Role Tests")
+    inner class RemoveRoleTests {
+        @Test
+        @DisplayName("Should successfully remove role from user")
+        fun removeRoleSanity() {
+            // Given
+            val user = UserFactory.generateUser()
+
+            every { userRepository.findByUsername("username") } returns user
+            every { roleRepository.deleteByUserAndRole(user, "ADMIN") } just Runs
+
+            // When
+            securityService.removeRole("username", "ADMIN")
+
+            // Then
+            verify(exactly = 1) { roleRepository.deleteByUserAndRole(user = user, role = "ADMIN") }
+        }
     }
 
-    @Test
-    @DisplayName("Get non existing user by id must throw error")
-    fun getUserByUserIdNotExistentSanity() {
-        Mockito.`when`(userRepository.findById(1L)).thenReturn(Optional.empty())
-        assertThrows<NotFoundException> {securityService.getUserByUserId(1L) }
+    @Nested
+    @DisplayName("Get User Tests")
+    inner class GetUserTests {
+        @Test
+        @DisplayName("Should successfully get user by ID")
+        fun getUserByUserIdSanity() {
+            // Given
+            val user = UserFactory.generateUser()
+            every { userRepository.findById(1L) } returns Optional.of(user)
+
+            // When
+            val result = securityService.getUserByUserId(1L)
+
+            // Then
+            assertThat(result).isNotNull
+            assertThat(result.userId).isEqualTo(user.userId)
+        }
+
+        @Test
+        @DisplayName("Should throw NotFoundException when user ID does not exist")
+        fun getUserByUserIdNotExistentSanity() {
+            // Given
+            every { userRepository.findById(1L) } returns Optional.empty()
+
+            // When / Then
+            assertThrows<NotFoundException> { securityService.getUserByUserId(1L) }
+        }
+
+        @Test
+        @DisplayName("Should successfully get user by username")
+        fun getUserByUsernameSanity() {
+            // Given
+            val user = UserFactory.generateUser()
+            every { userRepository.findByUsername("username") } returns user
+
+            // When
+            val result = securityService.getUserByUsername("username")
+
+            // Then
+            assertThat(result).isNotNull
+            assertThat(result.username).isEqualTo("username")
+        }
+
+        @Test
+        @DisplayName("Should throw NotFoundException when username does not exist")
+        fun getUserByUsernameNotExistentSanity() {
+            // Given
+            every { userRepository.findByUsername("username") } returns null
+
+            // When / Then
+            assertThrows<NotFoundException> { securityService.getUserByUsername("username") }
+        }
+
+        @Test
+        @DisplayName("Should return paginated users")
+        fun getUsersSanity() {
+            // Given
+            val user = UserFactory.generateUser()
+            val page = PageImpl(listOf(user))
+            every { userRepository.findAll(Pageable.unpaged()) } returns page
+
+            // When
+            val returnedPage = securityService.getUsers(Pageable.unpaged())
+
+            // Then
+            assertThat(returnedPage.content).hasSize(1)
+            assertThat(returnedPage.content.first()).isEqualTo(user)
+        }
     }
 
-    @Test
-    @DisplayName("Get user by username must not throw error")
-    fun getUserByUsernameSanity() {
-        val user = UserFactory.generateUser()
-        Mockito.`when`(userRepository.findByUsername("username")).thenReturn(user)
-        assertDoesNotThrow { securityService.getUserByUsername("username") }
+    @Nested
+    @DisplayName("Authentication Tests")
+    inner class AuthenticationTests {
+        @Test
+        @DisplayName("Should successfully authenticate and return JWT token")
+        fun authenticateSanity() {
+            // Given
+            val userId = UUID.randomUUID()
+            val principal = UserSecurity(1L, userId, "username", "password", "email", emptyList(), emptyList())
+            val authentication = UsernamePasswordAuthenticationToken(principal, "password", emptyList())
+            val expectedToken = "jwt-token-123"
+
+            every { authenticationManager.authenticate(any<UsernamePasswordAuthenticationToken>()) } returns authentication
+            every { jwtUtils.generateJwtToken(authentication) } returns expectedToken
+
+            // When
+            val token = securityService.authenticate("username", "password")
+
+            // Then
+            assertThat(token).isEqualTo(expectedToken)
+            verify(exactly = 1) { jwtUtils.generateJwtToken(authentication) }
+        }
     }
 
-    @Test
-    @DisplayName("Get non existing user by username must throw error")
-    fun getUserByUsernameNotExistentSanity() {
-        Mockito.`when`(userRepository.findByUsername("username")).thenReturn(null)
-        assertThrows<NotFoundException> { securityService.getUserByUsername("username") }
+    @Nested
+    @DisplayName("Me Tests")
+    inner class MeTests {
+        @Test
+        @DisplayName("Should return authenticated user information")
+        fun meSanity() {
+            // Given
+            val userId = UUID.randomUUID()
+            val principal = UserSecurity(1L, userId, "username", "password", "email@test.com", emptyList(), emptyList())
+            val authentication = UsernamePasswordAuthenticationToken(principal, "password", emptyList())
+            SecurityContextHolder.getContext().authentication = authentication
+
+            // When
+            val result = securityService.me()
+
+            // Then
+            assertThat(result).isNotNull
+            assertThat(result.username).isEqualTo("username")
+            assertThat(result.email).isEqualTo("email@test.com")
+        }
+
+        @Test
+        @DisplayName("Should throw AccessDeniedException when user is not authenticated")
+        fun meNotExistingSanity() {
+            // Given
+            val authentication = UsernamePasswordAuthenticationToken(null, null)
+            SecurityContextHolder.getContext().authentication = authentication
+
+            // When / Then
+            assertThrows<AccessDeniedException> { securityService.me() }
+        }
     }
 
-    @Test
-    @DisplayName("Get users paged sanity")
-    fun getUsersSanity() {
-        val user = UserFactory.generateUser()
-        val page = PageImpl(listOf(user))
-        Mockito.`when`(userRepository.findAll(Pageable.unpaged())).thenReturn(page)
-        val returnedPage = securityService.getUsers(Pageable.unpaged())
-        Assertions.assertThat(returnedPage.size).isEqualTo(1)
+    @Nested
+    @DisplayName("Update User Tests")
+    inner class UpdateUserTests {
+        @Test
+        @DisplayName("Should successfully update user details")
+        fun updateSanity() {
+            // Given
+            val user = UserFactory.generateUser()
+            val userId = UUID.randomUUID()
+            val principal = UserSecurity(1L, userId, "username", "password", "email", emptyList(), emptyList())
+            val authentication = UsernamePasswordAuthenticationToken(principal, "password", emptyList())
+            val updatedUser = user.copy(email = "newemail@test.com")
+
+            every { userRepository.findByUsername("username") } returns user
+            every { encoder.encode("newpassword") } returns "passwordEncoded"
+            every { userRepository.save(any<UserEntity>()) } returns updatedUser
+            SecurityContextHolder.getContext().authentication = authentication
+
+            // When
+            val result = securityService.updateUser("newemail@test.com", "newpassword")
+
+            // Then
+            assertThat(result.email).isEqualTo("newemail@test.com")
+            verify(exactly = 1) { userRepository.save(any<UserEntity>()) }
+        }
+
+        @Test
+        @DisplayName("Should throw IllegalArgumentException when authentication is invalid")
+        fun updateThrowExceptionSanity() {
+            // Given
+            val authentication = UsernamePasswordAuthenticationToken(null, null)
+            SecurityContextHolder.getContext().authentication = authentication
+
+            // When / Then
+            assertThrows<IllegalArgumentException> { securityService.updateUser("email", "password") }
+        }
     }
 
-    @Test
-    @DisplayName("Authentication sanity")
-    fun authenticateSanity() {
-        val principal = UserSecurity(1L, UUID.randomUUID(), "username", "password", "email", emptyList(), emptyList())
-        val authentication = UsernamePasswordAuthenticationToken(principal, "password", emptyList())
-        Mockito.`when`(authenticationManager.authenticate(Mockito.any(UsernamePasswordAuthenticationToken::class.java))).thenReturn(authentication)
-        securityService.authenticate("username", "password")
-        Mockito.verify(jwtUtils).generateJwtToken(authentication)
+    @Nested
+    @DisplayName("Create User Tests")
+    inner class CreateUserTests {
+        @Test
+        @DisplayName("Should successfully create new user with default role")
+        fun createUserSanity() {
+            // Given
+            val user = UserFactory.generateUser()
+            val role = RoleFactory.generateRole(user)
+
+            every { encoder.encode(user.password) } returns "passwordEncoded"
+            every { userRepository.existsByUsernameOrEmail(user.username, user.email) } returns false
+            every { userRepository.save(any<UserEntity>()) } returns user
+            every { roleRepository.save(any<RoleEntity>()) } returns role
+
+            // When
+            val result = securityService.createUser(user.username, user.password, user.email)
+
+            // Then
+            assertThat(result).isNotNull
+            assertThat(result.username).isEqualTo(user.username)
+            assertThat(result.email).isEqualTo(user.email)
+            assertThat(result.roles).hasSize(1)
+            assertThat(result.roles.first().role).isEqualTo("USER")
+            verify(exactly = 1) { userRepository.save(any<UserEntity>()) }
+            verify(exactly = 1) { roleRepository.save(any<RoleEntity>()) }
+        }
+
+        @Test
+        @DisplayName("Should throw UserAlreadyExistsException when user already exists")
+        fun createUserAlreadyExistsSanity() {
+            // Given
+            val user = UserFactory.generateUser()
+            every { userRepository.existsByUsernameOrEmail(user.username, user.email) } returns true
+
+            // When / Then
+            assertThrows<UserAlreadyExistsException> { 
+                securityService.createUser(user.username, user.password, user.email) 
+            }
+            verify(exactly = 0) { userRepository.save(any<UserEntity>()) }
+        }
     }
 
-    @Test
-    @DisplayName("Me sanity")
-    fun meSanity() {
-        val principal = UserSecurity(1L, UUID.randomUUID(), "username", "password", "email", emptyList(), emptyList())
-        val authentication = UsernamePasswordAuthenticationToken(principal, "password", emptyList())
-        SecurityContextHolder.getContext().authentication = authentication
-        assertDoesNotThrow { securityService.me() }
-    }
+    @Nested
+    @DisplayName("Find All Roles Tests")
+    inner class FindAllRolesTests {
+        @Test
+        @DisplayName("Should return all roles for a given username")
+        fun findAllRolesByUsernameSanity() {
+            // Given
+            val user = UserFactory.generateUser()
+            val roles = listOf(
+                RoleFactory.generateRole(user, "USER"),
+                RoleFactory.generateRole(user, "ADMIN")
+            )
 
-    @Test
-    @DisplayName("Update sanity")
-    fun updateSanity() {
-        // Given
-        val user = UserFactory.generateUser()
-        val principal = UserSecurity(1L, UUID.randomUUID(),"username", "password", "email", emptyList(), emptyList())
-        val authentication = UsernamePasswordAuthenticationToken(principal, "password", emptyList())
+            every { roleRepository.findAllByUser_Username("username") } returns roles
 
-        // When
-        Mockito.`when`(userRepository.findByUsername("username")).thenReturn(user)
-        Mockito.`when`(encoder.encode(user.password)).thenReturn("passwordEncoded")
-        Mockito.`when`(userRepository.save(Mockito.any(UserEntity::class.java))).thenReturn(user)
-        SecurityContextHolder.getContext().authentication = authentication
+            // When
+            val result = securityService.findAllRolesByUsername("username")
 
-        // Then
-        assertDoesNotThrow { securityService.updateUser("email", "password") }
-    }
+            // Then
+            assertThat(result).hasSize(2)
+            assertThat(result.map { it.role }).containsExactlyInAnyOrder("USER", "ADMIN")
+        }
 
-    @Test
-    @DisplayName("Update throw exception")
-    fun updateThrowExceptionSanity() {
-        // Given
-        val authentication = UsernamePasswordAuthenticationToken(null, null)
+        @Test
+        @DisplayName("Should return empty list when user has no roles")
+        fun findAllRolesByUsernameEmptySanity() {
+            // Given
+            every { roleRepository.findAllByUser_Username("username") } returns emptyList()
 
-        SecurityContextHolder.getContext().authentication = authentication
+            // When
+            val result = securityService.findAllRolesByUsername("username")
 
-        // Then
-        assertThrows<IllegalArgumentException> { securityService.updateUser("email", "password") }
-    }
-
-    @Test
-    @DisplayName("Me not existing sanity")
-    fun meNotExistingSanity() {
-        val authentication = UsernamePasswordAuthenticationToken(null, null)
-        SecurityContextHolder.getContext().authentication = authentication
-        assertThrows<AccessDeniedException> { securityService.me() }
-    }
-
-    @Test
-    @DisplayName("Create user sanity")
-    fun createUserSanity() {
-        val user = UserFactory.generateUser()
-        val role = RoleFactory.generateRole(user)
-        Mockito.`when`(encoder.encode(user.password)).thenReturn("passwordEncoded")
-        Mockito.`when`(userRepository.existsByUsernameOrEmail(user.username, user.email)).thenReturn(false)
-        Mockito.`when`(userRepository.save(Mockito.any(UserEntity::class.java))).thenReturn(user)
-        Mockito.`when`(roleRepository.save(Mockito.any(RoleEntity::class.java))).thenReturn(role)
-        assertDoesNotThrow { securityService.createUser(user.username, user.password, user.email) }
-    }
-
-    @Test
-    @DisplayName("Create user alerady exists sanity")
-    fun createUserAlreadyExistsSanity() {
-        val user = UserFactory.generateUser()
-        Mockito.`when`(userRepository.existsByUsernameOrEmail(user.username, user.email)).thenReturn(true)
-        assertThrows<UserAlreadyExistsException> { securityService.createUser(user.username, user.password, user.email) }
+            // Then
+            assertThat(result).isEmpty()
+        }
     }
 }
