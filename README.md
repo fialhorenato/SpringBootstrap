@@ -19,9 +19,9 @@ A starter template for building RESTful APIs with Spring Boot and Kotlin. It inc
 
 ## Tech Stack
 - Language: Kotlin
-- Framework: Spring Boot 3
+- Framework: Spring Boot 4
 - Build/Package manager: Gradle (Kotlin DSL) via the Gradle Wrapper
-- Web server: Undertow (Tomcat excluded)
+- Web server: Tomcat (default)
 - DB: H2 (dev), PostgreSQL (profile), Liquibase migrations
 - Auth: JWT (nimbus-jose-jwt)
 - Docs: springdoc-openapi
