@@ -67,7 +67,7 @@ class UserServiceImpl (
 
     override fun me(): UserSecurity {
         val authentication = SecurityContextHolder.getContext().authentication
-        return if (authentication.principal is UserSecurity) {
+        return if (authentication?.principal is UserSecurity) {
             authentication.principal as UserSecurity
         } else {
             throw AccessDeniedException("User not authenticated")
@@ -79,12 +79,13 @@ class UserServiceImpl (
             throw UserAlreadyExistsException()
         }
 
+
         val user = UserEntity(
             id = null,
             userId = UUID.randomUUID(),
             username = username,
             email = email,
-            password = encoder.encode(password),
+            password = encoder.encode(password).toString(),
             roles = Collections.emptyList()
         )
         
@@ -98,10 +99,10 @@ class UserServiceImpl (
 
     override fun updateUser(email: String, password: String): UserEntity {
         val authentication = SecurityContextHolder.getContext().authentication
-        if (authentication.principal is UserSecurity) {
+        if (authentication?.principal is UserSecurity) {
             val authDetails = authentication.principal as UserSecurity
             val myUser = getUserByUsername(username = authDetails.username)
-            val updatedUser = myUser.copy(email = email, password = encoder.encode(password));
+            val updatedUser = myUser.copy(email = email, password = encoder.encode(password).toString());
             return userRepository.save(updatedUser)
         }
         throw IllegalArgumentException("Cannot update user details")
