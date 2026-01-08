@@ -22,7 +22,7 @@ kotlin {
     jvmToolchain(24)
 }
 
-val nimbusJose4jVersion = "10.6"
+val nimbusJose4jVersion = "10.7"
 val springDocVersion = "3.0.1"
 val postgreSQLVersion = "42.7.8"
 val liquibaseVersion = "5.0.1"
