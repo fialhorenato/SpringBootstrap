@@ -28,7 +28,7 @@ val postgreSQLVersion = "42.7.8"
 val liquibaseVersion = "5.0.1"
 val h2databaseVersion = "2.4.240"
 val mockitoVersion = "5.21.0";
-val mockitoKotlinVersion = "6.2.1"
+val mockitoKotlinVersion = "6.2.2"
 
 
 repositories {
