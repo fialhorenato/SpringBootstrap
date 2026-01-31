@@ -3,133 +3,263 @@
 [![Build](https://github.com/fialhorenato/SpringBootstrap/actions/workflows/build.yml/badge.svg)](https://github.com/fialhorenato/SpringBootstrap/actions/workflows/build.yml)
 [![codecov](https://codecov.io/gh/fialhorenato/SpringBootstrap/branch/main/graph/badge.svg?token=8ATZXFJK2Q)](https://codecov.io/gh/fialhorenato/SpringBootstrap)
 
-The project can be seen running here: https://spring-bootstrap.onrender.com/swagger-ui/index.html
+A production-ready starter template for building RESTful APIs with Spring Boot and Kotlin.
+
+**Live Demo:** https://spring-bootstrap.onrender.com/swagger-ui/index.html
 
 
-## Overview
-A starter template for building RESTful APIs with Spring Boot and Kotlin. It includes:
-- JWT-based authentication with Spring Security (secured and open endpoints)
-- Persistence with Spring Data JPA
-- Database migrations with Liquibase
-- API documentation via springdoc-openapi (Swagger UI)
-- Actuator and Prometheus metrics
-- In-memory H2 DB for local development and PostgreSQL profile for local/prod
-- Docker image build with a minimized custom JRE (jlink)
-- CI with GitHub Actions, Codecov coverage upload, and Snyk scans
+## Features
+
+### Core Capabilities
+- **Authentication & Authorization**: JWT-based authentication with Spring Security, supporting both secured and open endpoints
+- **Database**: Spring Data JPA with Liquibase migrations
+  - H2 in-memory database for local development
+  - PostgreSQL for production environments
+- **API Documentation**: Interactive Swagger UI via springdoc-openapi
+- **Monitoring**: Actuator endpoints with Prometheus metrics integration
+- **Containerization**: Optimized Docker image using jlink for minimal JRE footprint
+
+### Development & CI/CD
+- **Build System**: Gradle with Kotlin DSL
+- **Testing**: Comprehensive test coverage with JUnit 5 and Mockito
+- **Continuous Integration**: GitHub Actions with automated testing, coverage reporting (Codecov), and security scanning (Snyk)
+- **Container Registry**: Automated image publishing to GitHub Container Registry
 
 ## Tech Stack
-- Language: Kotlin
-- Framework: Spring Boot 4
-- Build/Package manager: Gradle (Kotlin DSL) via the Gradle Wrapper
-- Web server: Tomcat (default)
-- DB: H2 (dev), PostgreSQL (profile), Liquibase migrations
-- Auth: JWT (nimbus-jose-jwt)
-- Docs: springdoc-openapi
-- Metrics: Micrometer + Prometheus
-- JDK: 24 (virtual threads enabled)
 
-## Requirements
-- JDK 24 (Temurin recommended)
-- Docker (optional, for containerized runs)
-- Make sure the Gradle Wrapper is executable: `chmod +x ./gradlew`
+| Category | Technology |
+|----------|-----------|
+| **Language** | Kotlin |
+| **Framework** | Spring Boot 4 |
+| **JDK** | 24 (virtual threads enabled) |
+| **Build Tool** | Gradle (Kotlin DSL) via Gradle Wrapper |
+| **Web Server** | Tomcat (embedded) |
+| **Database** | H2 (dev), PostgreSQL (production) |
+| **Migrations** | Liquibase |
+| **Authentication** | JWT (nimbus-jose-jwt) |
+| **API Documentation** | springdoc-openapi |
+| **Metrics** | Micrometer + Prometheus |
+
+## Prerequisites
+
+- **JDK 24** (Eclipse Temurin recommended)
+- **Docker** (optional, for containerized development and deployment)
+- **Git** (for cloning the repository)
+
+> **Note**: On Unix/macOS, ensure the Gradle Wrapper is executable: `chmod +x ./gradlew`
 
 ## Getting Started
 
-### Clone and build
-- Clone the repo
-- Build and run tests:
-  - Unix/macOS: `./gradlew clean build`
-  - Windows: `gradlew.bat clean build`
+### 1. Clone and Build
 
-### Run locally (H2, default profile)
-- Start the application:
-  - Unix/macOS: `./gradlew bootRun`
-  - Windows: `gradlew.bat bootRun`
-- App port: 8080 (override with `PORT`)
-- Actuator port: 8081 (also follows `PORT`; see Environment Variables)
+```bash
+# Clone the repository
+git clone https://github.com/fialhorenato/SpringBootstrap.git
+cd SpringBootstrap
+
+# Build and run tests
+./gradlew clean build          # Unix/macOS
+gradlew.bat clean build        # Windows
+```
+
+### 2. Run Locally (H2 Database)
+
+```bash
+# Start the application
+./gradlew bootRun              # Unix/macOS
+gradlew.bat bootRun            # Windows
+```
+
+**Access Points:**
+- API Server: http://localhost:8080
 - Swagger UI: http://localhost:8080/swagger-ui/index.html
+- Actuator: http://localhost:8081/actuator
 
-### Run with local PostgreSQL
-- Start a local DB with Docker Compose:
-  - `docker compose up -d db`
-- Run the app with the PostgreSQL profile:
-  - Unix/macOS: `SPRING_PROFILES_ACTIVE=local-postgresql ./gradlew bootRun`
-  - Windows (PowerShell): `$env:SPRING_PROFILES_ACTIVE="local-postgresql"; ./gradlew bootRun`
+> **Note**: Default ports are 8080 (application) and 8081 (management). Override with `PORT` environment variable.
 
-Liquibase will apply migrations automatically on startup.
+### 3. Run with PostgreSQL (Optional)
 
-## Environment Variables
-The following variables are read by the application:
-- PORT: Server port (defaults to 8080). Note: management.server.port is also configured to use `${PORT:8081}`. Setting PORT affects both due to the same variable name being used. TODO: Clarify intended management port variable.
-- JWT_SECRET: Secret for signing JWTs (default present in application.yml for dev only; replace in real deployments).
-- SPRING_PROFILES_ACTIVE: Set to `local-postgresql` to use PostgreSQL locally; `render` profile is also available (see application-render.yml).
-- For render profile:
-  - DATABASE_URL
-  - DATABASE_USERNAME
-  - DATABASE_PASSWORD
+For a production-like setup with PostgreSQL:
 
-Database defaults (dev):
-- H2 in-memory DB `jdbc:h2:mem:db` with username `sa` and password `sa`.
+```bash
+# Start PostgreSQL with Docker Compose
+docker compose up -d db
 
-## Common Gradle Tasks and Scripts
-- Build: `./gradlew clean build`
-- Run app: `./gradlew bootRun`
-- Package fat JAR: `./gradlew bootJar` → outputs `build/libs/app.jar`
-- Tests: `./gradlew test`
-- Coverage report: `./gradlew jacocoTestReport` → `build/reports/coverage/index.html`
+# Run the application with PostgreSQL profile
+SPRING_PROFILES_ACTIVE=local-postgresql ./gradlew bootRun                    # Unix/macOS
+$env:SPRING_PROFILES_ACTIVE="local-postgresql"; ./gradlew bootRun            # Windows PowerShell
+```
+
+Liquibase automatically applies database migrations on startup.
+
+## Configuration
+
+### Environment Variables
+
+| Variable | Description | Default | Required |
+|----------|-------------|---------|----------|
+| `PORT` | Application server port | `8080` | No |
+| `JWT_SECRET` | Secret key for signing JWTs | *(dev default)* | **Yes** (production) |
+| `SPRING_PROFILES_ACTIVE` | Active Spring profile | `default` | No |
+| `DATABASE_URL` | Database connection URL (render profile) | - | Yes (render) |
+| `DATABASE_USERNAME` | Database username (render profile) | - | Yes (render) |
+| `DATABASE_PASSWORD` | Database password (render profile) | - | Yes (render) |
+
+### Profiles
+
+- **default**: H2 in-memory database (`jdbc:h2:mem:db`, user: `sa`, password: `sa`)
+- **local-postgresql**: Local PostgreSQL database
+- **render**: Production deployment on Render.com
+
+> **Security Warning**: The default `JWT_SECRET` in `application.yml` is for development only. Always use a strong, unique secret in production environments.
+
+## Development
+
+### Common Gradle Tasks
+
+| Task | Command | Output |
+|------|---------|--------|
+| **Build project** | `./gradlew clean build` | - |
+| **Run application** | `./gradlew bootRun` | - |
+| **Package JAR** | `./gradlew bootJar` | `build/libs/app.jar` |
+| **Run tests** | `./gradlew test` | - |
+| **Generate coverage report** | `./gradlew jacocoTestReport` | `build/reports/coverage/index.html` |
+
+### Testing
+
+Tests use JUnit 5 and Mockito for unit and integration testing.
+
+```bash
+# Run all tests
+./gradlew test
+
+# Generate coverage report
+./gradlew jacocoTestReport
+
+# View coverage report
+open build/reports/coverage/index.html    # macOS
+xdg-open build/reports/coverage/index.html # Linux
+```
 
 ## Docker
-The Dockerfile builds a minimal runtime image using jdeps + jlink.
 
-Steps:
-1) Build the JAR first: `./gradlew clean bootJar`
-2) Build the image: `docker build -t springbootstrap:local .`
-3) Run the container: `docker run --rm -p 8080:8080 springbootstrap:local`
+The project includes an optimized multi-stage Dockerfile that creates a minimal runtime image using `jdeps` and `jlink` to generate a custom JRE.
 
-The CI pipeline also tags images for GHCR as `ghcr.io/fialhorenato/springbootstrap`.
+### Build and Run with Docker
 
-## API Endpoints (samples)
-- Hello World (insecure): `GET /hello-world/insecure`
-- Hello World (secured, requires ROLE_ADMIN): `GET /hello-world/secure`
-- Swagger: `/swagger-ui/index.html`
-- Actuator: `/actuator` (management endpoints)
+```bash
+# 1. Build the application JAR
+./gradlew clean bootJar
 
-## Testing
-- Unit and integration tests use JUnit 5 and Mockito.
-- Run: `./gradlew test`
-- Coverage: `./gradlew jacocoTestReport`
+# 2. Build the Docker image
+docker build -t springbootstrap:local .
+
+# 3. Run the container
+docker run --rm -p 8080:8080 springbootstrap:local
+```
+
+### Pre-built Images
+
+Pre-built images are available on GitHub Container Registry:
+
+```bash
+docker pull ghcr.io/fialhorenato/springbootstrap:latest
+```
+
+## API Reference
+
+### Sample Endpoints
+
+| Endpoint | Method | Authentication | Description |
+|----------|--------|----------------|-------------|
+| `/hello-world/insecure` | GET | None | Public endpoint |
+| `/hello-world/secure` | GET | JWT (ROLE_ADMIN) | Protected endpoint |
+| `/swagger-ui/index.html` | GET | None | Interactive API documentation |
+| `/actuator` | GET | None | Health and metrics endpoints |
+
+### Authentication
+
+To access secured endpoints:
+
+1. Obtain a JWT token (implementation-specific)
+2. Include the token in the Authorization header:
+   ```
+   Authorization: Bearer <your-jwt-token>
+   ```
+
+See `docs/requests/User.http` for sample HTTP requests.
 
 ## Project Structure
-- build.gradle.kts — Gradle configuration (Kotlin DSL)
-- settings.gradle.kts — Gradle settings
-- src/main/kotlin — Application source code
-  - com.renato.springbootstrap.SpringBootstrapApplication.kt — entry point
-  - com.renato.springbootstrap.api — External API integrations
-  - com.renato.springbootstrap.security — Security configuration, JWT handling, authentication services
-  - com.renato.springbootstrap.helloworld.controller.HelloWorldController.kt — Sample endpoints
-  - com.renato.springbootstrap.exception — Global exception handling
-- src/main/resources
-  - application.yml — default config (H2, ports, JWT)
-  - application-render.yml — Render deployment profile
-  - db/changelog — Liquibase changelogs
-- src/test/kotlin — Tests
-- Dockerfile — multi-stage build with custom JRE
-- docker-compose.yml — local Postgres service
-- docs/requests/User.http — sample HTTP requests
 
-## CI/CD (GitHub Actions)
-Workflow: `.github/workflows/build.yml`
-- Builds with JDK 24, runs tests and coverage
-- Uploads coverage to Codecov
-- Builds and scans Docker image with Snyk
-- Pushes images to GitHub Container Registry and prunes old versions
+```
+SpringBootstrap/
+├── build.gradle.kts                    # Gradle build configuration (Kotlin DSL)
+├── settings.gradle.kts                 # Gradle settings
+├── Dockerfile                          # Multi-stage Docker build with custom JRE
+├── docker-compose.yml                  # Local PostgreSQL service
+│
+├── src/
+│   ├── main/
+│   │   ├── kotlin/com/renato/springbootstrap/
+│   │   │   ├── SpringBootstrapApplication.kt    # Application entry point
+│   │   │   ├── api/                             # External API integrations
+│   │   │   ├── security/                        # Security config, JWT, auth services
+│   │   │   ├── helloworld/controller/           # Sample REST controllers
+│   │   │   └── exception/                       # Global exception handling
+│   │   │
+│   │   └── resources/
+│   │       ├── application.yml                  # Default config (H2, ports, JWT)
+│   │       ├── application-render.yml           # Render.com deployment profile
+│   │       └── db/changelog/                    # Liquibase migration scripts
+│   │
+│   └── test/kotlin/                    # Unit and integration tests
+│
+└── docs/requests/User.http            # Sample HTTP requests
+```
 
-Required repository secrets:
-- CODECOV_TOKEN
-- SNYK_TOKEN
+## CI/CD
+
+### GitHub Actions Pipeline
+
+The project uses automated CI/CD via `.github/workflows/build.yml`:
+
+**Build & Test:**
+- Compiles with JDK 24
+- Runs full test suite
+- Generates code coverage reports
+
+**Quality & Security:**
+- Uploads coverage to [Codecov](https://codecov.io)
+- Scans Docker images with [Snyk](https://snyk.io)
+
+**Deployment:**
+- Builds optimized Docker images
+- Publishes to GitHub Container Registry
+- Automatically prunes old image versions
+
+### Required Secrets
+
+Configure these secrets in your repository settings:
+
+| Secret | Purpose |
+|--------|---------|
+| `CODECOV_TOKEN` | Upload coverage reports to Codecov |
+| `SNYK_TOKEN` | Security scanning with Snyk |
 
 ## Security
-See SECURITY.md for security policies and practices.
+
+For security policies, vulnerability reporting, and best practices, please see [SECURITY.md](SECURITY.md).
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
-This project is licensed under the GNU General Public License v3.0 (GPL-3.0). See the LICENSE file for full terms.
+
+This project is licensed under the **GNU General Public License v3.0 (GPL-3.0)**.
+
+See [LICENSE](LICENSE) for full terms.
+
+---
+
+**Questions or Issues?** Please [open an issue](https://github.com/fialhorenato/SpringBootstrap/issues) on GitHub.
