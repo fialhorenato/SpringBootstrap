@@ -18,8 +18,10 @@ plugins {
 group = "com.renato"
 version = "0.0.1-SNAPSHOT"
 
-kotlin {
-    jvmToolchain(24)
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(24)
+	}
 }
 
 val nimbusJose4jVersion = "10.7"
@@ -79,17 +81,22 @@ dependencies {
     //Prometheus
     runtimeOnly("io.micrometer:micrometer-registry-prometheus")
 
+	// Devtools
     developmentOnly("org.springframework.boot:spring-boot-devtools")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
-	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+
+	// Nimbus Jose4j
+	implementation("com.nimbusds:nimbus-jose-jwt:$nimbusJose4jVersion")
+
+	// SpringDoc
+	implementation ("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springDocVersion")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-	implementation("com.nimbusds:nimbus-jose-jwt:$nimbusJose4jVersion")
-	implementation ("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springDocVersion")
-	testImplementation("org.mockito:mockito-core:$mockitoVersion")
-	testImplementation("org.mockito:mockito-junit-jupiter:$mockitoVersion")
-	testImplementation("org.mockito.kotlin:mockito-kotlin:$mockitoKotlinVersion")
+
+	// Test
+	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
 }
 
