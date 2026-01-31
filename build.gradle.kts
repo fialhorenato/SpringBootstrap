@@ -18,17 +18,14 @@ plugins {
 group = "com.renato"
 version = "0.0.1-SNAPSHOT"
 
-kotlin {
-    jvmToolchain(24)
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(24)
+	}
 }
 
 val nimbusJose4jVersion = "10.7"
 val springDocVersion = "3.0.1"
-val postgreSQLVersion = "42.7.8"
-val liquibaseVersion = "5.0.1"
-val h2databaseVersion = "2.4.240"
-val mockitoVersion = "5.21.0";
-val mockitoKotlinVersion = "6.2.3"
 
 
 repositories {
@@ -45,52 +42,61 @@ tasks.jacocoTestReport {
 }
 
 dependencies {
-    // Web
-    implementation("org.springframework.boot:spring-boot-starter-webmvc")
-    testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
+	// Web
+	implementation("org.springframework.boot:spring-boot-starter-webmvc")
+	testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
 
-    // Actuator
-    implementation("org.springframework.boot:spring-boot-starter-actuator")
-    testImplementation("org.springframework.boot:spring-boot-starter-actuator-test")
+	// Actuator
+	implementation("org.springframework.boot:spring-boot-starter-actuator")
+	testImplementation("org.springframework.boot:spring-boot-starter-actuator-test")
 
-    // Data JPA
+	// Data JPA
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
+	testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
 
-    // Security
+	// Security
 	implementation("org.springframework.boot:spring-boot-starter-security")
-    testImplementation("org.springframework.boot:spring-boot-starter-security-test")
+	testImplementation("org.springframework.boot:spring-boot-starter-security-test")
 
-    // Validation
+	// Validation
 	implementation("org.springframework.boot:spring-boot-starter-validation")
-    testImplementation("org.springframework.boot:spring-boot-starter-validation-test")
+	testImplementation("org.springframework.boot:spring-boot-starter-validation-test")
 
-    // Liquibase
-    implementation("org.springframework.boot:spring-boot-starter-liquibase")
-    testImplementation("org.springframework.boot:spring-boot-starter-liquibase-test")
+	// Liquibase
+	implementation("org.springframework.boot:spring-boot-starter-liquibase")
+	testImplementation("org.springframework.boot:spring-boot-starter-liquibase-test")
 
-    //H2
-    implementation("org.springframework.boot:spring-boot-h2console")
-    runtimeOnly("com.h2database:h2")
+	// H2
+	implementation("org.springframework.boot:spring-boot-h2console")
+	runtimeOnly("com.h2database:h2")
 
-    //PostgreSQL
-    runtimeOnly("org.postgresql:postgresql")
+	// PostgreSQL
+	runtimeOnly("org.postgresql:postgresql")
 
-    //Prometheus
-    runtimeOnly("io.micrometer:micrometer-registry-prometheus")
+	// Prometheus
+	runtimeOnly("io.micrometer:micrometer-registry-prometheus")
 
-    developmentOnly("org.springframework.boot:spring-boot-devtools")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+	// Devtools
+	developmentOnly("org.springframework.boot:spring-boot-devtools")
 
-	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+	// Nimbus Jose4j
+	implementation("com.nimbusds:nimbus-jose-jwt:$nimbusJose4jVersion")
+
+	// SpringDoc
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springDocVersion")
+
+	// Kotlin
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-	implementation("com.nimbusds:nimbus-jose-jwt:$nimbusJose4jVersion")
-	implementation ("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springDocVersion")
-	testImplementation("org.mockito:mockito-core:$mockitoVersion")
-	testImplementation("org.mockito:mockito-junit-jupiter:$mockitoVersion")
-	testImplementation("org.mockito.kotlin:mockito-kotlin:$mockitoKotlinVersion")
+	
 
+	// Test
+	testImplementation("org.springframework.boot:spring-boot-starter-test") {
+		exclude(group = "org.assertj", module = "assertj-core")
+	}
+	testImplementation("org.assertj:assertj-core:3.27.7")
+	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 tasks.withType<KotlinCompile> {
