@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+- Aligned Kotlin/JVM toolchains and Jacoco configuration in Gradle build.
 - Reworked Dockerfile for Java 25 with a jlink runtime, alpine base image, and non-root runtime user for smaller images.
 - Use jlink compression `--compress=zip-9` for smallest runtime size.
 
