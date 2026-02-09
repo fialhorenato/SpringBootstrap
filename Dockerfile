@@ -14,7 +14,7 @@ RUN jdeps --ignore-missing-deps -q \
 
 RUN jlink \
     --add-modules $(cat deps.info),jdk.crypto.ec \
-    --compress=2 \
+    --compress=zip \
     --strip-debug \
     --no-header-files \
     --no-man-pages \
