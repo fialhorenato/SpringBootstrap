@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Reworked Dockerfile for Java 25 with a jlink runtime, alpine base image, and non-root runtime user for smaller images.
-- Switched jlink compression to the non-deprecated `--compress=zip` flag.
+- Use jlink compression `--compress=zip-9` for smallest runtime size.
 
 ## [0.0.1] - 2026-02-01
 
