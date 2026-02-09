@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
 	val kotlinVersion = "2.3.10"
@@ -18,27 +19,36 @@ plugins {
 group = "com.renato"
 version = "0.0.1-SNAPSHOT"
 
+val nimbusJose4jVersion = "10.7"
+val springDocVersion = "3.0.1"
+val jacocoToolVersion = "0.8.12"
+
+kotlin {
+	jvmToolchain(24)
+}
+
 java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(24)
 	}
 }
 
-val nimbusJose4jVersion = "10.7"
-val springDocVersion = "3.0.1"
-
-
 repositories {
 	mavenCentral()
 }
 
 tasks.jacocoTestReport {
+	dependsOn(tasks.test)
 	reports {
 		xml.required.set(true)
 		csv.required.set(true)
 		html.required.set(true)
 		html.outputLocation.set(File("${layout.buildDirectory.get().asFile}/reports/coverage"))
 	}
+}
+
+jacoco {
+	toolVersion = jacocoToolVersion
 }
 
 dependencies {
@@ -88,7 +98,6 @@ dependencies {
 	// Kotlin
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-	
 
 	// Test
 	testImplementation("org.springframework.boot:spring-boot-starter-test") {
@@ -102,6 +111,7 @@ dependencies {
 tasks.withType<KotlinCompile> {
 	compilerOptions {
 		freeCompilerArgs.add("-Xjsr305=strict")
+		jvmTarget.set(JvmTarget.JVM_24)
 	}
 }
 
@@ -113,4 +123,5 @@ tasks.bootJar {
 tasks.test {
 	useJUnitPlatform()
 	jvmArgs = listOf("-Xshare:off", "-XX:+EnableDynamicAgentLoading")
+	finalizedBy(tasks.jacocoTestReport)
 }
