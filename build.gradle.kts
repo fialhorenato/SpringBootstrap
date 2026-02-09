@@ -17,7 +17,7 @@ plugins {
 }
 
 group = "com.renato"
-version = "0.0.1-SNAPSHOT"
+version = "0.1.0"
 
 val nimbusJose4jVersion = "10.7"
 val springDocVersion = "3.0.1"
