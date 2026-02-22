@@ -21,7 +21,7 @@ version = "0.1.0"
 
 val nimbusJose4jVersion = "10.7"
 val springDocVersion = "3.0.1"
-val jacocoToolVersion = "0.8.12"
+val jacocoToolVersion = "0.8.13"
 
 kotlin {
 	jvmToolchain(24)
