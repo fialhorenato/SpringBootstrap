@@ -2,100 +2,111 @@ package com.renato.springbootstrap.security.utils
 
 import com.renato.springbootstrap.security.domain.UserSecurity
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
-import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.InjectMocks
-import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import java.text.ParseException
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import java.util.UUID
 
-@ExtendWith(MockitoExtension::class)
 class JwtUtilsTest {
-    
-    @InjectMocks
-    lateinit var jwtUtils: JwtUtils
-    
-    companion object{
-        const val TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0ZSIsImV4cCI6MTc0NzcwMjg1MiwidXNlcl9pZCI6Ijk4ZGE4YzYwLWU4NTctNDMwYy1hZWU3LTRhN2YyNWRhZTEzZiIsImlhdCI6MTc0NzYxNjQ1MiwiZW1haWwiOiJ0ZXN0ZSIsInJvbGVzIjpbIlVTRVIiXX0.WzQYstTB-pijxstUothFW0se6ZSl2i2mMMtMVdvRZmY"
-    }
-    
-    @Test
-    fun getClaimsFromTokenSanity() {
-        assertThat(jwtUtils.getAuthoritiesFromJwtToken(TOKEN)).hasSize(1)
-        assertThat(jwtUtils.getUserNameFromJwtToken(TOKEN)).isEqualTo("teste")
-        assertThat(jwtUtils.getEmailFromJwtToken(TOKEN)).isEqualTo("teste")
-        assertThat(jwtUtils.getPasswordFromJwtToken(TOKEN)).isNotEqualTo("teste")
-        assertThat(jwtUtils.getRolesFromJwtToken(TOKEN)).hasSize(1)
+
+    private lateinit var jwtUtils: JwtUtils
+
+    @BeforeEach
+    fun setUp() {
+        jwtUtils = JwtUtils().apply {
+            jwtSecret = "0123456789abcdef0123456789abcdef"
+            jwtExpirationMs = 86_400_000
+        }
     }
 
     @Test
-    fun generateJwtTokenSanity() {
-        jwtUtils.jwtSecret = "95605770-21fe-43da-9986-8506693c1327"
-        jwtUtils.jwtExpirationMs = 86400000
-        val principal = UserSecurity(1L, UUID.randomUUID(),"username", "password", "email", emptyList(), emptyList())
-        val authentication = UsernamePasswordAuthenticationToken(principal, "password", emptyList())
-        assertDoesNotThrow { jwtUtils.generateJwtToken(authentication) }
-    }
+    fun `given_authenticated_principal_when_generate_token_then_expected_claims_are_present`() {
+        val principal = UserSecurity(
+            id = 1L,
+            userId = UUID.randomUUID(),
+            username = "username",
+            password = "password",
+            email = "email@example.com",
+            authorities = listOf(SimpleGrantedAuthority("USER")),
+            roles = listOf("USER"),
+        )
+        val authentication = UsernamePasswordAuthenticationToken(principal, "password", principal.authorities)
 
-    @Test
-    fun toUserDetailsSanity() {
-        val userDetails = jwtUtils.toUserDetails(TOKEN)
-        assertThat(userDetails.username).isEqualTo("teste")
-        assertThat(userDetails.email).isEqualTo("teste")
-        assertThat(userDetails.roles).isNotEmpty
-    }
-
-    @Test
-    fun validateJwtTokenSanity() {
-        jwtUtils.jwtSecret = "95605770-21fe-43da-9986-8506693c1327"
-        jwtUtils.jwtExpirationMs = 86400000
-        val principal = UserSecurity(1L, UUID.randomUUID(),"username", "password", "email", emptyList(), emptyList())
-        val authentication = UsernamePasswordAuthenticationToken(principal, "password", emptyList())
         val token = jwtUtils.generateJwtToken(authentication)
 
-        // Assertions
-        assertDoesNotThrow { jwtUtils.validateJwtToken(token) }
-        assertThat(jwtUtils.validateJwtToken("notAToken")).isFalse
-        assertThat(jwtUtils.validateJwtToken(token)).isTrue
-        assertThat(jwtUtils.validateJwtToken(TOKEN)).isFalse
+        assertThat(jwtUtils.getUserNameFromJwtToken(token)).isEqualTo("username")
+        assertThat(jwtUtils.getEmailFromJwtToken(token)).isEqualTo("email@example.com")
+        assertThat(jwtUtils.getPasswordFromJwtToken(token)).isEqualTo("password")
+        assertThat(jwtUtils.getRolesFromJwtToken(token)).containsExactly("USER")
+        assertThat(jwtUtils.getAuthoritiesFromJwtToken(token).map { it.authority }).containsExactly("ROLE_USER")
     }
 
     @Test
-    fun validateJwtTokenWithoutSecretSanity() {
-        jwtUtils.jwtExpirationMs = 86400000
-        val principal = UserSecurity(1L, UUID.randomUUID(),"username", "password", "email", emptyList(), emptyList())
+    fun `given_valid_token_when_to_user_details_is_called_then_domain_user_is_mapped`() {
+        val principal = UserSecurity(
+            id = 1L,
+            userId = UUID.randomUUID(),
+            username = "username",
+            password = "password",
+            email = "email@example.com",
+            authorities = listOf(SimpleGrantedAuthority("USER")),
+            roles = listOf("USER"),
+        )
+        val authentication = UsernamePasswordAuthenticationToken(principal, "password", principal.authorities)
+        val token = jwtUtils.generateJwtToken(authentication)
+
+        val userDetails = jwtUtils.toUserDetails(token)
+
+        assertThat(userDetails.username).isEqualTo("username")
+        assertThat(userDetails.email).isEqualTo("email@example.com")
+        assertThat(userDetails.roles).containsExactly("USER")
+    }
+
+    @Test
+    fun `given_valid_and_invalid_tokens_when_validate_is_called_then_expected_flags_are_returned`() {
+        val principal = UserSecurity(
+            id = 1L,
+            userId = UUID.randomUUID(),
+            username = "username",
+            password = "password",
+            email = "email@example.com",
+            authorities = listOf(SimpleGrantedAuthority("USER")),
+            roles = listOf("USER"),
+        )
+        val authentication = UsernamePasswordAuthenticationToken(principal, "password", principal.authorities)
+        val token = jwtUtils.generateJwtToken(authentication)
+
+        assertThat(jwtUtils.validateJwtToken(token)).isTrue
+        assertThat(jwtUtils.validateJwtToken("not-a-token")).isFalse
+    }
+
+    @Test
+    fun `given_missing_secret_when_generate_token_then_uninitialized_property_exception_is_thrown`() {
+        val jwtWithoutSecret = JwtUtils().apply {
+            jwtExpirationMs = 86_400_000
+        }
+        val principal = UserSecurity(
+            id = 1L,
+            userId = UUID.randomUUID(),
+            username = "username",
+            password = "password",
+            email = "email@example.com",
+            authorities = emptyList(),
+            roles = emptyList(),
+        )
         val authentication = UsernamePasswordAuthenticationToken(principal, "password", emptyList())
 
-        // Assertions
-        assertThrows<UninitializedPropertyAccessException> { jwtUtils.generateJwtToken(authentication) }
+        assertThrows<UninitializedPropertyAccessException> {
+            jwtWithoutSecret.generateJwtToken(authentication)
+        }
     }
 
     @Test
-    fun validateInvalidSecretWithoutSecretSanity() {
-        jwtUtils.jwtExpirationMs = 86400000
-        jwtUtils.jwtSecret = "šššššššš"
-        val principal = UserSecurity(1L, UUID.randomUUID(),"username", "password", "email", emptyList(), emptyList())
-        UsernamePasswordAuthenticationToken(principal, "password", emptyList())
-
-        // Assertions
-        val result = jwtUtils.validateJwtToken("")
-
-        assertThat(result).isFalse
-    }
-
-    @Test
-    fun validateEmptySecretWithoutSecretSanity() {
-        jwtUtils.jwtExpirationMs = 86400000
+    fun `given_invalid_secret_when_validate_is_called_then_false_is_returned`() {
         jwtUtils.jwtSecret = ""
-        val principal = UserSecurity(1L, UUID.randomUUID(), "username", "password", "email", emptyList(), emptyList())
-        UsernamePasswordAuthenticationToken(principal, "password", emptyList())
 
-        // Assertions
-        val result = jwtUtils.validateJwtToken("")
-
-        assertThat(result).isFalse
+        assertThat(jwtUtils.validateJwtToken("invalid")).isFalse
     }
 }

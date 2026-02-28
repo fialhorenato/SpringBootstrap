@@ -10,15 +10,18 @@ import com.renato.springbootstrap.security.exception.UserAlreadyExistsException
 import com.renato.springbootstrap.security.repository.RoleRepository
 import com.renato.springbootstrap.security.repository.UserRepository
 import com.renato.springbootstrap.security.utils.JwtUtils
-import org.assertj.core.api.Assertions
-import org.junit.jupiter.api.DisplayName
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.mockito.Mockito
+import org.mockito.Mockito.any
+import org.mockito.Mockito.verify
+import org.mockito.Mockito.verifyNoInteractions
+import org.mockito.Mockito.verifyNoMoreInteractions
+import org.mockito.Mockito.`when`
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
@@ -27,12 +30,14 @@ import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
-import java.util.*
+import java.util.Optional
+import java.util.UUID
 
 @ExtendWith(MockitoExtension::class)
 class SecurityServiceTest {
+
     @InjectMocks
-    lateinit var securityService: UserServiceImpl
+    lateinit var service: UserServiceImpl
 
     @Mock
     lateinit var userRepository: UserRepository
@@ -49,138 +54,255 @@ class SecurityServiceTest {
     @Mock
     lateinit var jwtUtils: JwtUtils
 
-    @Test
-    @DisplayName("Add role must call the repository once")
-    fun addRoleSanity() {
-        val user = UserFactory.generateUser()
-        Mockito.`when`(userRepository.findByUsername("username")).thenReturn(user)
-        securityService.addRole("username", "ADMIN")
-        Mockito.verify(roleRepository).save(Mockito.any(RoleEntity::class.java))
+    @AfterEach
+    fun tearDown() {
+        SecurityContextHolder.clearContext()
     }
 
     @Test
-    @DisplayName("Remove role must call the repository once")
-    fun removeRoleSanity() {
-        val user = UserFactory.generateUser()
-        Mockito.`when`(userRepository.findByUsername("username")).thenReturn(user)
-        securityService.removeRole("username", "ADMIN")
-        Mockito.verify(roleRepository).deleteByUserAndRole(user = user, role = "ADMIN")
+    fun `given_existing_user_when_add_role_is_called_then_role_is_persisted`() {
+        val user = UserFactory.createUser()
+        `when`(userRepository.findByUsername("username")).thenReturn(user)
+
+        service.addRole("username", "ADMIN")
+
+        verify(userRepository).findByUsername("username")
+        verify(roleRepository).save(any(RoleEntity::class.java))
+        verifyNoMoreInteractions(userRepository, roleRepository)
     }
 
     @Test
-    @DisplayName("Get user by id must not throw error")
-    fun getUserByUserIdSanity() {
-        val user = UserFactory.generateUser()
-        Mockito.`when`(userRepository.findById(1L)).thenReturn(Optional.of(user))
-        assertDoesNotThrow {securityService.getUserByUserId(1L) }
+    fun `given_existing_user_and_role_when_remove_role_is_called_then_role_is_deleted`() {
+        val user = UserFactory.createUser()
+        `when`(userRepository.findByUsername("username")).thenReturn(user)
+
+        service.removeRole("username", "ADMIN")
+
+        verify(userRepository).findByUsername("username")
+        verify(roleRepository).deleteByUserAndRole(user = user, role = "ADMIN")
+        verifyNoMoreInteractions(userRepository, roleRepository)
     }
 
     @Test
-    @DisplayName("Get non existing user by id must throw error")
-    fun getUserByUserIdNotExistentSanity() {
-        Mockito.`when`(userRepository.findById(1L)).thenReturn(Optional.empty())
-        assertThrows<NotFoundException> {securityService.getUserByUserId(1L) }
+    fun `given_existing_user_id_when_get_user_by_id_is_called_then_user_is_returned`() {
+        val user = UserFactory.createUser()
+        `when`(userRepository.findById(1L)).thenReturn(Optional.of(user))
+
+        val result = service.getUserByUserId(1L)
+
+        assertThat(result).isEqualTo(user)
+        verify(userRepository).findById(1L)
+        verifyNoMoreInteractions(userRepository)
     }
 
     @Test
-    @DisplayName("Get user by username must not throw error")
-    fun getUserByUsernameSanity() {
-        val user = UserFactory.generateUser()
-        Mockito.`when`(userRepository.findByUsername("username")).thenReturn(user)
-        assertDoesNotThrow { securityService.getUserByUsername("username") }
+    fun `given_missing_user_id_when_get_user_by_id_is_called_then_not_found_is_thrown`() {
+        `when`(userRepository.findById(1L)).thenReturn(Optional.empty())
+
+        assertThrows<NotFoundException> {
+            service.getUserByUserId(1L)
+        }
+
+        verify(userRepository).findById(1L)
+        verifyNoMoreInteractions(userRepository)
     }
 
     @Test
-    @DisplayName("Get non existing user by username must throw error")
-    fun getUserByUsernameNotExistentSanity() {
-        Mockito.`when`(userRepository.findByUsername("username")).thenReturn(null)
-        assertThrows<NotFoundException> { securityService.getUserByUsername("username") }
+    fun `given_existing_username_when_get_user_by_username_is_called_then_user_is_returned`() {
+        val user = UserFactory.createUser(username = "username")
+        `when`(userRepository.findByUsername("username")).thenReturn(user)
+
+        val result = service.getUserByUsername("username")
+
+        assertThat(result).isEqualTo(user)
+        verify(userRepository).findByUsername("username")
+        verifyNoMoreInteractions(userRepository)
     }
 
     @Test
-    @DisplayName("Get users paged sanity")
-    fun getUsersSanity() {
-        val user = UserFactory.generateUser()
-        val page = PageImpl(listOf(user))
-        Mockito.`when`(userRepository.findAll(Pageable.unpaged())).thenReturn(page)
-        val returnedPage = securityService.getUsers(Pageable.unpaged())
-        Assertions.assertThat(returnedPage.size).isEqualTo(1)
+    fun `given_missing_username_when_get_user_by_username_is_called_then_not_found_is_thrown`() {
+        `when`(userRepository.findByUsername("username")).thenReturn(null)
+
+        assertThrows<NotFoundException> {
+            service.getUserByUsername("username")
+        }
+
+        verify(userRepository).findByUsername("username")
+        verifyNoMoreInteractions(userRepository)
     }
 
     @Test
-    @DisplayName("Authentication sanity")
-    fun authenticateSanity() {
-        val principal = UserSecurity(1L, UUID.randomUUID(), "username", "password", "email", emptyList(), emptyList())
+    fun `given_pageable_when_get_users_is_called_then_repository_page_is_returned`() {
+        val page = PageImpl(listOf(UserFactory.createUser()))
+        `when`(userRepository.findAll(Pageable.unpaged())).thenReturn(page)
+
+        val result = service.getUsers(Pageable.unpaged())
+
+        assertThat(result.content).hasSize(1)
+        verify(userRepository).findAll(Pageable.unpaged())
+        verifyNoMoreInteractions(userRepository)
+    }
+
+    @Test
+    fun `given_valid_credentials_when_authenticate_is_called_then_token_is_returned_and_context_is_updated`() {
+        val principal = UserSecurity(
+            id = 1L,
+            userId = UUID.randomUUID(),
+            username = "username",
+            password = "password",
+            email = "email",
+            authorities = emptyList(),
+            roles = emptyList(),
+        )
         val authentication = UsernamePasswordAuthenticationToken(principal, "password", emptyList())
-        Mockito.`when`(authenticationManager.authenticate(Mockito.any(UsernamePasswordAuthenticationToken::class.java))).thenReturn(authentication)
-        securityService.authenticate("username", "password")
-        Mockito.verify(jwtUtils).generateJwtToken(authentication)
+
+        `when`(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken::class.java)))
+            .thenReturn(authentication)
+        `when`(jwtUtils.generateJwtToken(authentication)).thenReturn("jwt-token")
+
+        val token = service.authenticate("username", "password")
+
+        assertThat(token).isEqualTo("jwt-token")
+        assertThat(SecurityContextHolder.getContext().authentication).isEqualTo(authentication)
+        verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken::class.java))
+        verify(jwtUtils).generateJwtToken(authentication)
+        verifyNoMoreInteractions(authenticationManager, jwtUtils)
     }
 
     @Test
-    @DisplayName("Me sanity")
-    fun meSanity() {
-        val principal = UserSecurity(1L, UUID.randomUUID(), "username", "password", "email", emptyList(), emptyList())
-        val authentication = UsernamePasswordAuthenticationToken(principal, "password", emptyList())
-        SecurityContextHolder.getContext().authentication = authentication
-        assertDoesNotThrow { securityService.me() }
+    fun `given_authenticated_principal_when_me_is_called_then_user_security_is_returned`() {
+        val principal = UserSecurity(
+            id = 1L,
+            userId = UUID.randomUUID(),
+            username = "username",
+            password = "password",
+            email = "email",
+            authorities = emptyList(),
+            roles = listOf("USER"),
+        )
+        SecurityContextHolder.getContext().authentication =
+            UsernamePasswordAuthenticationToken(principal, null, principal.authorities)
+
+        val result = service.me()
+
+        assertThat(result.username).isEqualTo("username")
+        assertThat(result.roles).containsExactly("USER")
     }
 
     @Test
-    @DisplayName("Update sanity")
-    fun updateSanity() {
-        // Given
-        val user = UserFactory.generateUser()
-        val principal = UserSecurity(1L, UUID.randomUUID(),"username", "password", "email", emptyList(), emptyList())
-        val authentication = UsernamePasswordAuthenticationToken(principal, "password", emptyList())
+    fun `given_missing_user_security_principal_when_me_is_called_then_access_denied_is_thrown`() {
+        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(null, null)
 
-        // When
-        Mockito.`when`(userRepository.findByUsername("username")).thenReturn(user)
-        Mockito.`when`(encoder.encode(user.password)).thenReturn("passwordEncoded")
-        Mockito.`when`(userRepository.save(Mockito.any(UserEntity::class.java))).thenReturn(user)
-        SecurityContextHolder.getContext().authentication = authentication
-
-        // Then
-        assertDoesNotThrow { securityService.updateUser("email", "password") }
+        assertThrows<AccessDeniedException> {
+            service.me()
+        }
     }
 
     @Test
-    @DisplayName("Update throw exception")
-    fun updateThrowExceptionSanity() {
-        // Given
-        val authentication = UsernamePasswordAuthenticationToken(null, null)
+    fun `given_null_authentication_when_me_is_called_then_access_denied_is_thrown`() {
+        SecurityContextHolder.getContext().authentication = null
 
-        SecurityContextHolder.getContext().authentication = authentication
-
-        // Then
-        assertThrows<IllegalArgumentException> { securityService.updateUser("email", "password") }
+        assertThrows<AccessDeniedException> {
+            service.me()
+        }
     }
 
     @Test
-    @DisplayName("Me not existing sanity")
-    fun meNotExistingSanity() {
-        val authentication = UsernamePasswordAuthenticationToken(null, null)
-        SecurityContextHolder.getContext().authentication = authentication
-        assertThrows<AccessDeniedException> { securityService.me() }
+    fun `given_authenticated_user_when_update_user_is_called_then_email_and_encoded_password_are_persisted`() {
+        val existingUser = UserFactory.createUser(username = "username", email = "old@email.com", password = "old")
+        val principal = UserSecurity(
+            id = 1L,
+            userId = UUID.randomUUID(),
+            username = "username",
+            password = "old",
+            email = "old@email.com",
+            authorities = emptyList(),
+            roles = listOf("USER"),
+        )
+        SecurityContextHolder.getContext().authentication =
+            UsernamePasswordAuthenticationToken(principal, null, principal.authorities)
+
+        `when`(userRepository.findByUsername("username")).thenReturn(existingUser)
+        `when`(encoder.encode("new-password")).thenReturn("encoded-password")
+        `when`(userRepository.save(any(UserEntity::class.java))).thenAnswer { it.arguments[0] as UserEntity }
+
+        val updated = service.updateUser("new@email.com", "new-password")
+
+        assertThat(updated.email).isEqualTo("new@email.com")
+        assertThat(updated.password).isEqualTo("encoded-password")
+        verify(userRepository).findByUsername("username")
+        verify(encoder).encode("new-password")
+        verify(userRepository).save(any(UserEntity::class.java))
+        verifyNoMoreInteractions(userRepository, encoder)
     }
 
     @Test
-    @DisplayName("Create user sanity")
-    fun createUserSanity() {
-        val user = UserFactory.generateUser()
-        val role = RoleFactory.generateRole(user)
-        Mockito.`when`(encoder.encode(user.password)).thenReturn("passwordEncoded")
-        Mockito.`when`(userRepository.existsByUsernameOrEmail(user.username, user.email)).thenReturn(false)
-        Mockito.`when`(userRepository.save(Mockito.any(UserEntity::class.java))).thenReturn(user)
-        Mockito.`when`(roleRepository.save(Mockito.any(RoleEntity::class.java))).thenReturn(role)
-        assertDoesNotThrow { securityService.createUser(user.username, user.password, user.email) }
+    fun `given_non_user_security_principal_when_update_user_is_called_then_illegal_argument_is_thrown`() {
+        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(null, null)
+
+        assertThrows<IllegalArgumentException> {
+            service.updateUser("email", "password")
+        }
+
+        verifyNoInteractions(userRepository, encoder)
     }
 
     @Test
-    @DisplayName("Create user alerady exists sanity")
-    fun createUserAlreadyExistsSanity() {
-        val user = UserFactory.generateUser()
-        Mockito.`when`(userRepository.existsByUsernameOrEmail(user.username, user.email)).thenReturn(true)
-        assertThrows<UserAlreadyExistsException> { securityService.createUser(user.username, user.password, user.email) }
+    fun `given_null_authentication_when_update_user_is_called_then_illegal_argument_is_thrown`() {
+        SecurityContextHolder.getContext().authentication = null
+
+        assertThrows<IllegalArgumentException> {
+            service.updateUser("email", "password")
+        }
+
+        verifyNoInteractions(userRepository, encoder)
+    }
+
+    @Test
+    fun `given_new_user_data_when_create_user_is_called_then_user_and_default_role_are_persisted`() {
+        val savedUser = UserFactory.createUser(username = "username", email = "email")
+        val savedRole = RoleFactory.createRole(savedUser, "USER")
+
+        `when`(userRepository.existsByUsernameOrEmail("username", "email")).thenReturn(false)
+        `when`(encoder.encode("password")).thenReturn("encoded-password")
+        `when`(userRepository.save(any(UserEntity::class.java))).thenReturn(savedUser)
+        `when`(roleRepository.save(any(RoleEntity::class.java))).thenReturn(savedRole)
+
+        val created = service.createUser("username", "password", "email")
+
+        assertThat(created.username).isEqualTo("username")
+        assertThat(created.roles.map { it.role }).containsExactly("USER")
+        verify(userRepository).existsByUsernameOrEmail("username", "email")
+        verify(encoder).encode("password")
+        verify(userRepository).save(any(UserEntity::class.java))
+        verify(roleRepository).save(any(RoleEntity::class.java))
+        verifyNoMoreInteractions(userRepository, encoder, roleRepository)
+    }
+
+    @Test
+    fun `given_existing_username_or_email_when_create_user_is_called_then_user_already_exists_is_thrown`() {
+        `when`(userRepository.existsByUsernameOrEmail("username", "email")).thenReturn(true)
+
+        assertThrows<UserAlreadyExistsException> {
+            service.createUser("username", "password", "email")
+        }
+
+        verify(userRepository).existsByUsernameOrEmail("username", "email")
+        verifyNoMoreInteractions(userRepository)
+        verifyNoInteractions(encoder, roleRepository)
+    }
+
+    @Test
+    fun `given_username_when_find_all_roles_is_called_then_roles_are_returned`() {
+        val user = UserFactory.createUser(username = "username")
+        val roles = listOf(RoleFactory.createRole(user, "USER"), RoleFactory.createRole(user, "ADMIN"))
+        `when`(roleRepository.findAllByUser_Username("username")).thenReturn(roles)
+
+        val result = service.findAllRolesByUsername("username")
+
+        assertThat(result).hasSize(2)
+        assertThat(result.map { it.role }).containsExactlyInAnyOrder("USER", "ADMIN")
+        verify(roleRepository).findAllByUser_Username("username")
+        verifyNoMoreInteractions(roleRepository)
     }
 }
