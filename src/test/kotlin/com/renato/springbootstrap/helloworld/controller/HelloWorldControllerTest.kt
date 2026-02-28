@@ -1,26 +1,22 @@
 package com.renato.springbootstrap.helloworld.controller
 
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.InjectMocks
-import org.mockito.junit.jupiter.MockitoExtension
 
-@ExtendWith(MockitoExtension::class)
 class HelloWorldControllerTest {
-    @InjectMocks lateinit var helloWorldController: HelloWorldController
+    private val controller = HelloWorldController()
 
     @Test
-    fun `Hello World secure Sanity` () {
-        val result = helloWorldController.helloWorldSecured()
+    fun `given_secure_endpoint_when_called_then_expected_message_is_returned`() {
+        val response = controller.helloWorldSecured()
 
-        Assertions.assertThat(result).isEqualTo("Hello World with Security")
+        assertThat(response).isEqualTo("Hello World with Security")
     }
 
     @Test
-    fun `Hello World insecure Sanity` () {
-        val result = helloWorldController.helloWorldInsecured()
+    fun `given_insecure_endpoint_when_called_then_expected_message_is_returned`() {
+        val response = controller.helloWorldInsecured()
 
-        Assertions.assertThat(result).isEqualTo("Hello World Insecure")
+        assertThat(response).isEqualTo("Hello World Insecure")
     }
 }
