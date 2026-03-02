@@ -20,7 +20,7 @@ group = "com.renato"
 version = "0.1.0"
 
 val nimbusJose4jVersion = "10.8"
-val springDocVersion = "3.0.1"
+val springDocVersion = "3.0.2"
 val jacocoToolVersion = "0.8.13"
 
 kotlin {
