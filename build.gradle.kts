@@ -37,6 +37,13 @@ repositories {
 	mavenCentral()
 }
 
+dependencyManagement {
+	imports {
+		mavenBom("com.fasterxml.jackson:jackson-bom:2.21.1")
+		mavenBom("tools.jackson:jackson-bom:3.1.0")
+	}
+}
+
 tasks.jacocoTestReport {
 	dependsOn(tasks.test)
 	reports {
