@@ -29,7 +29,8 @@ FROM alpine:3.23
 ENV JAVA_HOME=/opt/java/openjdk \
     PATH="/opt/java/openjdk/bin:${PATH}" \
     JAVA_TOOL_OPTIONS="-XX:MaxRAMPercentage=75.0 -Dfile.encoding=UTF-8"
-RUN addgroup -S app && adduser -S app -G app
+RUN apk upgrade --no-cache && \
+    addgroup -S app && adduser -S app -G app
 WORKDIR /app
 
 COPY --from=builder /jre-custom ${JAVA_HOME}
