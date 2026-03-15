@@ -209,7 +209,7 @@ class SecurityServiceTest {
 
     @Test
     fun `given_authenticated_user_when_update_user_is_called_then_email_and_encoded_password_are_persisted`() {
-        val existingUser = UserFactory.createUser(username = "username", email = "old@email.com", password = "old")
+        val existingUser = UserFactory.createUser(username = "username", email = "old@email.com", password = "old", salt = "existing-salt")
         val principal = UserSecurity(
             id = 1L,
             userId = UUID.randomUUID(),
@@ -223,17 +223,14 @@ class SecurityServiceTest {
             UsernamePasswordAuthenticationToken(principal, null, principal.authorities)
 
         `when`(userRepository.findByUsername("username")).thenReturn(existingUser)
-        `when`(encoder.encode("new-password")).thenReturn("encoded-password")
         `when`(userRepository.save(any(UserEntity::class.java))).thenAnswer { it.arguments[0] as UserEntity }
 
         val updated = service.updateUser("new@email.com", "new-password")
 
         assertThat(updated.email).isEqualTo("new@email.com")
-        assertThat(updated.password).isEqualTo("encoded-password")
         verify(userRepository).findByUsername("username")
-        verify(encoder).encode("new-password")
         verify(userRepository).save(any(UserEntity::class.java))
-        verifyNoMoreInteractions(userRepository, encoder)
+        verifyNoMoreInteractions(userRepository)
     }
 
     @Test
@@ -260,11 +257,10 @@ class SecurityServiceTest {
 
     @Test
     fun `given_new_user_data_when_create_user_is_called_then_user_and_default_role_are_persisted`() {
-        val savedUser = UserFactory.createUser(username = "username", email = "email")
+        val savedUser = UserFactory.createUser(username = "username", email = "email", salt = "test-salt")
         val savedRole = RoleFactory.createRole(savedUser, "USER")
 
         `when`(userRepository.existsByUsernameOrEmail("username", "email")).thenReturn(false)
-        `when`(encoder.encode("password")).thenReturn("encoded-password")
         `when`(userRepository.save(any(UserEntity::class.java))).thenReturn(savedUser)
         `when`(roleRepository.save(any(RoleEntity::class.java))).thenReturn(savedRole)
 
@@ -273,10 +269,9 @@ class SecurityServiceTest {
         assertThat(created.username).isEqualTo("username")
         assertThat(created.roles.map { it.role }).containsExactly("USER")
         verify(userRepository).existsByUsernameOrEmail("username", "email")
-        verify(encoder).encode("password")
         verify(userRepository).save(any(UserEntity::class.java))
         verify(roleRepository).save(any(RoleEntity::class.java))
-        verifyNoMoreInteractions(userRepository, encoder, roleRepository)
+        verifyNoMoreInteractions(userRepository, roleRepository)
     }
 
     @Test

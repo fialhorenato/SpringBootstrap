@@ -79,16 +79,19 @@ class UserServiceImpl (
             throw UserAlreadyExistsException()
         }
 
+        val salt = UUID.randomUUID().toString()
+        val saltedPassword = salt + password
 
         val user = UserEntity(
             id = null,
             userId = UUID.randomUUID(),
             username = username,
             email = email,
-            password = encoder.encode(password).toString(),
+            password = encoder.encode(saltedPassword).toString(),
+            salt = salt,
             roles = Collections.emptyList()
         )
-        
+
         val savedUser = userRepository.save(user);
         val role = addRole(userEntity = savedUser);
 
@@ -102,7 +105,13 @@ class UserServiceImpl (
         if (authentication?.principal is UserSecurity) {
             val authDetails = authentication.principal as UserSecurity
             val myUser = getUserByUsername(username = authDetails.username)
-            val updatedUser = myUser.copy(email = email, password = encoder.encode(password).toString());
+            val salt = UUID.randomUUID().toString()
+            val saltedPassword = salt + password
+            val updatedUser = myUser.copy(
+                email = email,
+                password = encoder.encode(saltedPassword).toString(),
+                salt = salt
+            );
             return userRepository.save(updatedUser)
         }
         throw IllegalArgumentException("Cannot update user details")

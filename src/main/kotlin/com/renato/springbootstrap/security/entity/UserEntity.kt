@@ -22,6 +22,8 @@ data class UserEntity (
 
         val password : String,
 
+        val salt : String,
+
         @OneToMany(cascade = [CascadeType.ALL], mappedBy = "user")
         val roles : List<RoleEntity>,
 
