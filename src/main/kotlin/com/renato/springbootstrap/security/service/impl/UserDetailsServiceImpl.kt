@@ -20,6 +20,7 @@ class UserDetailsServiceImpl(
                 it.username,
                 it.password,
                 it.email,
+                it.salt,
                 it.roles.map { role -> SimpleGrantedAuthority(role.role) },
                 it.roles.map { role -> role.role }.toList())
             }

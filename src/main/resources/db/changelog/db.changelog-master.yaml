@@ -75,3 +75,13 @@ databaseChangeLog:
         - addUniqueConstraint:
             columnNames: "user_id, role"
             tableName: roles
+  - changeSet:
+      id: add_salt_column
+      author: renato
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: salt
+                  type: varchar(64)

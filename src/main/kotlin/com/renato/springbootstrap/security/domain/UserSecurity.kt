@@ -10,6 +10,7 @@ class UserSecurity(
     username: String,
     password: String,
     val email: String,
+    val salt: String = "",
     val authorities: List<GrantedAuthority>,
     val roles : List<String>
 ) : User(username, password, authorities) {

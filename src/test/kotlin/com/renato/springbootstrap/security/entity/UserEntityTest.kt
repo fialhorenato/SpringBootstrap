@@ -89,7 +89,7 @@ class UserEntityTest {
     fun `given_user_entity_when_destructured_and_copied_then_components_and_copy_are_correct`() {
         val user = UserFactory.createUser(username = "username", email = "email")
 
-        val (id, userId, username, email, password, roles, createdAt, updatedAt) = user
+        val (id, userId, username, email, password, salt, roles, createdAt, updatedAt) = user
         val copied = user.copy(email = "new@email.com")
 
         assertThat(id).isEqualTo(user.id)
@@ -97,6 +97,7 @@ class UserEntityTest {
         assertThat(username).isEqualTo("username")
         assertThat(email).isEqualTo("email")
         assertThat(password).isEqualTo("password")
+        assertThat(salt).isEqualTo("salt")
         assertThat(roles).isEqualTo(user.roles)
         assertThat(createdAt).isEqualTo(user.createdAt)
         assertThat(updatedAt).isEqualTo(user.updatedAt)
