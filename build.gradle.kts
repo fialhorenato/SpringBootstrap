@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.gradle.api.tasks.compile.JavaCompile
 
 plugins {
 	val kotlinVersion = "2.3.20"
@@ -120,6 +121,10 @@ tasks.withType<KotlinCompile> {
 		freeCompilerArgs.add("-Xjsr305=strict")
 		jvmTarget.set(JvmTarget.JVM_24)
 	}
+}
+
+tasks.withType<JavaCompile> {
+	options.release.set(24)
 }
 
 tasks.bootJar {
