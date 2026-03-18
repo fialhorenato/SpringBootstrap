@@ -24,12 +24,12 @@ val springDocVersion = "3.0.2"
 val jacocoToolVersion = "0.8.13"
 
 kotlin {
-	jvmToolchain(24)
+	jvmToolchain(25)
 }
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(24)
+		languageVersion = JavaLanguageVersion.of(25)
 	}
 }
 
