@@ -31,7 +31,7 @@ A production-ready starter template for building RESTful APIs with Spring Boot a
 |----------|-----------|
 | **Language** | Kotlin |
 | **Framework** | Spring Boot 4 |
-| **JDK** | 24 (virtual threads enabled) |
+| **JDK** | 25 (virtual threads enabled) |
 | **Build Tool** | Gradle (Kotlin DSL) via Gradle Wrapper |
 | **Web Server** | Tomcat (embedded) |
 | **Database** | H2 (dev), PostgreSQL (production) |
@@ -42,7 +42,7 @@ A production-ready starter template for building RESTful APIs with Spring Boot a
 
 ## Prerequisites
 
-- **JDK 24** (Eclipse Temurin recommended)
+- **JDK 25** (Eclipse Temurin recommended)
 - **Docker** (optional, for containerized development and deployment)
 - **Git** (for cloning the repository)
 
@@ -224,7 +224,7 @@ SpringBootstrap/
 The project uses automated CI/CD via `.github/workflows/build.yml`:
 
 **Build & Test:**
-- Compiles with JDK 24
+- Compiles with JDK 25
 - Runs full test suite
 - Generates code coverage reports
 
