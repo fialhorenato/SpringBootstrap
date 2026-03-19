@@ -4,7 +4,7 @@ import org.gradle.api.tasks.compile.JavaCompile
 
 plugins {
 	val kotlinVersion = "2.3.20"
-	val springBootVersion = "4.0.3"
+	val springBootVersion = "4.0.4"
 	val springDependencyVersion = "1.1.7"
 
 	id("org.springframework.boot") version springBootVersion
