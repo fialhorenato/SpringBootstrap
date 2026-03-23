@@ -20,7 +20,7 @@ jobs:
           java-version: '25'
           cache: 'gradle'
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: gradle/actions/setup-gradle@v6
       - name: Build with Gradle
         run: ./gradlew clean build check
       - name: Code Coverage
