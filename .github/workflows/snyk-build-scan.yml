@@ -14,7 +14,7 @@ jobs:
           java-version: '25'
           cache: 'gradle'
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: gradle/actions/setup-gradle@v6
       - name: Ensure Gradle wrapper is executable
         run: chmod +x ./gradlew
       - name: Setup Snyk CLI
