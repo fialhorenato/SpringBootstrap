@@ -1,9 +1,3 @@
 package com.renato.springbootstrap.exception
 
-import java.util.function.Supplier
-
-class NotFoundException(override var message : String) : RuntimeException(), Supplier<Throwable> {
-    override fun get(): Throwable {
-        return this
-    }
-}
+class NotFoundException(message: String, cause: Throwable? = null) : RuntimeException(message, cause)

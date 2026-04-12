@@ -42,7 +42,7 @@ class UserServiceImpl (
     override fun getUserByUserId(userId: Long): UserEntity {
         return userRepository
             .findById(userId)
-            .orElseThrow(NotFoundException(String.format("User %d cannot be found", userId)))
+            .orElseThrow { NotFoundException(String.format("User %d cannot be found", userId)) }
     }
 
     override fun getUserByUsername(username: String): UserEntity {

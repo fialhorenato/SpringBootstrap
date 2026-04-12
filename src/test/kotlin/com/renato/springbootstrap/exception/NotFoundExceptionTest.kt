@@ -2,25 +2,26 @@ package com.renato.springbootstrap.exception
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 class NotFoundExceptionTest {
 
     @Test
-    fun `given_not_found_exception_when_get_is_called_then_same_instance_is_returned`() {
+    fun `given_not_found_exception_when_created_then_message_is_preserved_and_throwable`() {
         val exception = NotFoundException("not found")
 
-        val supplied = exception.get()
-
         assertThat(exception.message).isEqualTo("not found")
-        assertThat(supplied).isSameAs(exception)
+        assertThrows<NotFoundException> {
+            throw exception
+        }
     }
 
     @Test
-    fun `given_not_found_exception_when_message_is_updated_then_new_message_is_exposed`() {
-        val exception = NotFoundException("initial")
+    fun `given_not_found_exception_with_cause_when_created_then_cause_is_preserved`() {
+        val cause = IllegalStateException("root cause")
 
-        exception.message = "updated"
+        val exception = NotFoundException("not found", cause)
 
-        assertThat(exception.message).isEqualTo("updated")
+        assertThat(exception.cause).isSameAs(cause)
     }
 }
