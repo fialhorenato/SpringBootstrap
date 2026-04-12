@@ -14,7 +14,7 @@ import org.springframework.web.filter.OncePerRequestFilter
 @Component
 class JwtAuthorizationFilter(private val jwtUtils: JwtUtils) : OncePerRequestFilter() {
     companion object {
-        const val TOKEN_PREFIX = "Bearer"
+        const val TOKEN_PREFIX = "Bearer "
     }
 
     override fun doFilterInternal(
@@ -22,16 +22,13 @@ class JwtAuthorizationFilter(private val jwtUtils: JwtUtils) : OncePerRequestFil
             response: HttpServletResponse,
             filterChain: FilterChain
     ) {
-        val header = request.getHeader(HttpHeaders.AUTHORIZATION)
-
-        if (header == null || !header.startsWith(TOKEN_PREFIX)) {
+        val token = resolveToken(request.getHeader(HttpHeaders.AUTHORIZATION))
+        if (token == null) {
             filterChain.doFilter(request, response);
             return
         }
-        
-        val token = getToken(header)
 
-        if(jwtUtils.validateJwtToken(token)) {
+        if (SecurityContextHolder.getContext().authentication == null && jwtUtils.validateJwtToken(token)) {
             val userDetails = jwtUtils.toUserDetails(token)
             val authentication = UsernamePasswordAuthenticationToken(userDetails, null, userDetails.authorities)
             authentication.details = WebAuthenticationDetailsSource().buildDetails(request)
@@ -41,7 +38,10 @@ class JwtAuthorizationFilter(private val jwtUtils: JwtUtils) : OncePerRequestFil
         filterChain.doFilter(request, response)
     }
 
-    private fun getToken(header: String): String {
-        return header.substring(7, header.length)
+    private fun resolveToken(header: String?): String? {
+        if (header.isNullOrBlank() || !header.startsWith(TOKEN_PREFIX, ignoreCase = true)) {
+            return null
+        }
+        return header.substring(TOKEN_PREFIX.length).trim().takeIf { it.isNotEmpty() }
     }
 }
