@@ -51,7 +51,6 @@ class ErrorHandlerTest {
         assertThat(body.error).isEqualTo(expectedStatus.reasonPhrase)
         assertThat(body.code).isEqualTo(expectedCode)
         assertThat(body.path).isEqualTo("/api/auth/login")
-        assertThat(body.details).isEmpty()
         assertThat(body.timestamp).isNotNull()
     }
 
@@ -70,7 +69,6 @@ class ErrorHandlerTest {
         assertThat(body.error).isEqualTo(HttpStatus.UNAUTHORIZED.reasonPhrase)
         assertThat(body.code).isEqualTo("INVALID_TOKEN")
         assertThat(body.path).isEqualTo("/api/auth/refresh")
-        assertThat(body.details).isEmpty()
     }
 
     @Test
@@ -88,7 +86,6 @@ class ErrorHandlerTest {
         assertThat(body.error).isEqualTo(HttpStatus.BAD_REQUEST.reasonPhrase)
         assertThat(body.code).isEqualTo("BAD_REQUEST")
         assertThat(body.path).isEqualTo("/api/users")
-        assertThat(body.details).isEmpty()
     }
 
     @Test
@@ -98,6 +95,20 @@ class ErrorHandlerTest {
         }
 
         val response = errorHandler.handle(RuntimeException("   "), request)
+
+        assertThat(response.statusCode).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR)
+        val body = response.body as GeneralFailureResponse
+        assertThat(body.message).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase)
+        assertThat(body.code).isEqualTo("RUNTIME_ERROR")
+    }
+
+    @Test
+    fun `given_empty_message_when_handle_then_response_uses_http_reason_phrase`() {
+        val request = MockHttpServletRequest().apply {
+            requestURI = "/api/users"
+        }
+
+        val response = errorHandler.handle(RuntimeException(""), request)
 
         assertThat(response.statusCode).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR)
         val body = response.body as GeneralFailureResponse

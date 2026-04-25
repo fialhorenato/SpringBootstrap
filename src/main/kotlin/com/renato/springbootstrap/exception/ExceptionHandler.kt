@@ -100,17 +100,22 @@ class ExceptionHandler {
         code: String,
         message: String?,
         request: HttpServletRequest,
-        details: List<String> = emptyList(),
     ): ResponseEntity<GeneralFailureResponse> {
+        val responseMessage = normalizeMessage(message, status.reasonPhrase)
         val response = GeneralFailureResponse(
             timestamp = Instant.now(),
             status = status.value(),
             error = status.reasonPhrase,
             code = code,
-            message = message?.ifBlank { status.reasonPhrase } ?: status.reasonPhrase,
+            message = responseMessage,
             path = request.requestURI,
-            details = details,
         )
         return ResponseEntity.status(status).body(response)
+    }
+
+    private fun normalizeMessage(message: String?, fallback: String): String {
+        if (message == null) return fallback
+        if (message.isBlank()) return fallback
+        return message
     }
 }
