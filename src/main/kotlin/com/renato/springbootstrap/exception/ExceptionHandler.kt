@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.authentication.BadCredentialsException
+import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import java.time.Instant
@@ -46,6 +47,17 @@ class ExceptionHandler {
         return buildErrorResponse(
             status = HttpStatus.UNAUTHORIZED,
             code = "BAD_CREDENTIALS",
+            message = ex.localizedMessage,
+            request = request,
+        )
+    }
+
+    @ExceptionHandler(UsernameNotFoundException::class)
+    fun handle(ex: UsernameNotFoundException, request: HttpServletRequest): ResponseEntity<GeneralFailureResponse> {
+        logger.warn(ex.localizedMessage, ex)
+        return buildErrorResponse(
+            status = HttpStatus.NOT_FOUND,
+            code = "USER_NOT_FOUND",
             message = ex.localizedMessage,
             request = request,
         )
