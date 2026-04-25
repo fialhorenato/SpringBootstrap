@@ -9,5 +9,4 @@ data class GeneralFailureResponse(
     val code: String,
     val message: String,
     val path: String,
-    val details: List<String> = emptyList(),
 )

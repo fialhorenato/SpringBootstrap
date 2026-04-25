@@ -17,7 +17,6 @@ class GeneralFailureResponseTest {
             code = "BAD_CREDENTIALS",
             message = "Invalid username or password",
             path = "/api/auth/login",
-            details = listOf("username must not be blank"),
         )
 
         assertThat(response.timestamp).isEqualTo(timestamp)
@@ -26,21 +25,6 @@ class GeneralFailureResponseTest {
         assertThat(response.code).isEqualTo("BAD_CREDENTIALS")
         assertThat(response.message).isEqualTo("Invalid username or password")
         assertThat(response.path).isEqualTo("/api/auth/login")
-        assertThat(response.details).containsExactly("username must not be blank")
-    }
-
-    @Test
-    fun `given_details_not_provided_when_constructed_then_details_defaults_to_empty`() {
-        val response = GeneralFailureResponse(
-            timestamp = Instant.parse("2026-04-25T10:15:30Z"),
-            status = 500,
-            error = "Internal Server Error",
-            code = "INTERNAL_ERROR",
-            message = "Unexpected error",
-            path = "/api/users",
-        )
-
-        assertThat(response.details).isEmpty()
     }
 
     @Test
@@ -53,7 +37,6 @@ class GeneralFailureResponseTest {
             code = "BAD_REQUEST",
             message = "Malformed payload",
             path = "/api/users",
-            details = listOf("email is invalid"),
         )
         val actual = expected.copy()
 
