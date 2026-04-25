@@ -247,6 +247,8 @@ Configure these secrets in your repository settings:
 | `SNYK_TOKEN` | Security scanning with Snyk |
 | `RENDER_DEPLOY_HOOK_URL` | Trigger Render deploy after successful `main` image publish |
 
+The Render deploy workflow sends `imgURL=ghcr.io/fialhorenato/springbootstrap:<commit-sha>` to the deploy hook so each deploy uses the exact immutable image built on `main`.
+
 ## Security
 
 For security policies, vulnerability reporting, and best practices, please see [SECURITY.md](SECURITY.md).

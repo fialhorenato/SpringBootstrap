@@ -20,11 +20,16 @@ jobs:
       - name: Trigger Render deploy hook
         env:
           RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+          IMAGE_URL: ghcr.io/fialhorenato/springbootstrap:${{ github.event.workflow_run.head_sha }}
         run: |
           if [ -z "$RENDER_DEPLOY_HOOK_URL" ]; then
             echo "Missing required secret: RENDER_DEPLOY_HOOK_URL"
             exit 1
           fi
 
-          curl --fail --silent --show-error --request POST "$RENDER_DEPLOY_HOOK_URL"
+          # Deploy the exact immutable image tag that was produced by the Build workflow.
+          ENCODED_IMAGE_URL="$(printf '%s' "$IMAGE_URL" | jq -sRr @uri)"
+          DEPLOY_URL="${RENDER_DEPLOY_HOOK_URL}?imgURL=${ENCODED_IMAGE_URL}"
+
+          curl --fail --silent --show-error --request POST "$DEPLOY_URL"
           echo "Render deploy hook triggered successfully."
