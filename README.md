@@ -245,6 +245,7 @@ Configure these secrets in your repository settings:
 |--------|---------|
 | `CODECOV_TOKEN` | Upload coverage reports to Codecov |
 | `SNYK_TOKEN` | Security scanning with Snyk |
+| `RENDER_DEPLOY_HOOK_URL` | Trigger Render deploy after successful `main` image publish |
 
 ## Security
 
