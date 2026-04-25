@@ -60,6 +60,10 @@ jacoco {
 }
 
 dependencies {
+	constraints {
+		implementation("org.apache.tomcat.embed:tomcat-embed-core:11.0.21")
+	}
+
 	// Web
 	implementation("org.springframework.boot:spring-boot-starter-webmvc")
 	testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
