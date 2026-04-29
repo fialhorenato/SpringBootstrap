@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.authentication.BadCredentialsException
+import org.springframework.security.core.userdetails.UsernameNotFoundException
 import java.util.stream.Stream
 
 class ErrorHandlerTest {
@@ -40,6 +41,7 @@ class ErrorHandlerTest {
             is AccessDeniedException -> errorHandler.handle(exception, request)
             is UserAlreadyExistsException -> errorHandler.handle(exception, request)
             is BadCredentialsException -> errorHandler.handle(exception, request)
+            is UsernameNotFoundException -> errorHandler.handle(exception, request)
             is RuntimeException -> errorHandler.handle(exception, request)
             else -> errorHandler.handle(exception, request)
         }
@@ -137,6 +139,7 @@ class ErrorHandlerTest {
                 Arguments.of(AccessDeniedException("myMessage"), HttpStatus.FORBIDDEN, "ACCESS_DENIED"),
                 Arguments.of(UserAlreadyExistsException("myMessage"), HttpStatus.CONFLICT, "USER_ALREADY_EXISTS"),
                 Arguments.of(BadCredentialsException("myMessage"), HttpStatus.UNAUTHORIZED, "BAD_CREDENTIALS"),
+                Arguments.of(UsernameNotFoundException("myMessage"), HttpStatus.NOT_FOUND, "USER_NOT_FOUND"),
                 Arguments.of(Exception("myMessage"), HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_ERROR"),
                 Arguments.of(RuntimeException("myMessage"), HttpStatus.INTERNAL_SERVER_ERROR, "RUNTIME_ERROR"),
             )
