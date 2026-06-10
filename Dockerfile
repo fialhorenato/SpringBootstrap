@@ -24,7 +24,7 @@ RUN jlink \
 RUN strip -p --strip-unneeded /jre-custom/lib/server/libjvm.so && \
    find /jre-custom -name '*.so' -exec strip -p --strip-unneeded {} +
 
-FROM alpine:3.23
+FROM alpine:3.24
 
 ENV JAVA_HOME=/opt/java/openjdk \
     PATH="/opt/java/openjdk/bin:${PATH}" \
