@@ -21,7 +21,6 @@ group = "com.renato"
 version = "0.1.0"
 
 val nimbusJose4jVersion = "10.9"
-val postgresqlVersion = "42.7.11"
 val springDocVersion = "3.0.3"
 val jacocoToolVersion = "0.8.13"
 
@@ -90,7 +89,7 @@ dependencies {
 	runtimeOnly("com.h2database:h2")
 
 	// PostgreSQL
-	runtimeOnly("org.postgresql:postgresql:$postgresqlVersion")
+	runtimeOnly("org.postgresql:postgresql")
 
 	// Prometheus
 	runtimeOnly("io.micrometer:micrometer-registry-prometheus")
