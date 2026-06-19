@@ -43,13 +43,8 @@ repositories {
 
 dependencyManagement {
 	imports {
-<<<<<<< Updated upstream
-		mavenBom("com.fasterxml.jackson:jackson-bom:2.22.0")
-		mavenBom("tools.jackson:jackson-bom:3.1.4")
-=======
 		mavenBom("com.fasterxml.jackson:jackson-bom:$fasterxmlJacksonVersion")
 		mavenBom("tools.jackson:jackson-bom:$toolsJacksonVersion")
->>>>>>> Stashed changes
 	}
 }
 
