@@ -22,6 +22,9 @@ version = "0.1.0"
 
 val nimbusJose4jVersion = "10.9.1"
 val springDocVersion = "3.0.3"
+val assertjVersion = "3.27.7"
+val fasterxmlJacksonVersion = "2.21.2"
+val toolsJacksonVersion = "3.1.2"
 val jacocoToolVersion = "0.8.13"
 
 kotlin {
@@ -40,8 +43,13 @@ repositories {
 
 dependencyManagement {
 	imports {
+<<<<<<< Updated upstream
 		mavenBom("com.fasterxml.jackson:jackson-bom:2.22.0")
 		mavenBom("tools.jackson:jackson-bom:3.1.4")
+=======
+		mavenBom("com.fasterxml.jackson:jackson-bom:$fasterxmlJacksonVersion")
+		mavenBom("tools.jackson:jackson-bom:$toolsJacksonVersion")
+>>>>>>> Stashed changes
 	}
 }
 
@@ -111,7 +119,7 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-test") {
 		exclude(group = "org.assertj", module = "assertj-core")
 	}
-	testImplementation("org.assertj:assertj-core:3.27.7")
+	testImplementation("org.assertj:assertj-core:$assertjVersion")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
