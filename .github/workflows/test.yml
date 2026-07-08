@@ -37,7 +37,8 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           image: ghcr.io/fialhorenato/springbootstrap:latest
-          args: --file=Dockerfile --fail-on=false
+          args: --file=Dockerfile
+        continue-on-error: true
   auto-approval:
     permissions: write-all
     needs: test
