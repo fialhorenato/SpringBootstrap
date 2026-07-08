@@ -1,15 +1,26 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+### Project Overview
+Production-ready Spring Boot + Kotlin starter template for building RESTful APIs. Uses Spring Boot 4.0.3, JDK 24 (Virtual Threads), Gradle (Kotlin DSL). Supports PostgreSQL and H2.
 
-## Project Overview
+### Architecture Summary
 
-Production-ready Spring Boot + Kotlin starter template for building RESTful APIs. Uses Spring Boot 4.0.3, JDK 24 with virtual threads, Gradle (Kotlin DSL), and PostgreSQL with H2 for development.
+#### Core Components
+*   **API Layer:** Controllers handle business logic; DTOs are in `api/request/` and `api/response/`. Global exception handling is in `exception/`. Swagger UI at `/swagger-ui/index.html`.
+*   **Security:** Handled via JWT authentication (located in the `security/` package).
+    *   `config/SecurityConfig.kt`: Spring Security setup with JWT filter.
+    *   `utils/JwtUtils.kt`: Token generation/validation.
+*   **Database:** Liquibase migrations are stored in `src/main/resources/db/changelog/`. JPA repositories are in `security/repository/`. H2 is for development; PostgreSQL is for production.
 
-## Common Commands
+#### Configuration & Environments
+*   **Profile Management:** `application.yml` (Default profile: H2). Use `application-render.yml` for Production profiles, managing environment variables like `JWT_SECRET`, `DATABASE_URL`, etc.
+*   **Dependencies:** Key dependencies are defined in `build.gradle.kts`, including Jackson BOMs and PostgreSQL (`runtimeOnly("org.postgresql:postgresql")`).
 
+### Common Build Commands
+
+**Build & Test:**
 ```bash
-# Build and test
+# Clean, build, and run tests
 ./gradlew clean build
 
 # Run locally (H2 database)
@@ -19,53 +30,11 @@ Production-ready Spring Boot + Kotlin starter template for building RESTful APIs
 docker compose up -d db
 SPRING_PROFILES_ACTIVE=local-postgresql ./gradlew bootRun
 
-# Run single test
-./gradlew test --tests "FullyQualifiedTestClassName"
-
 # Generate coverage report
 ./gradlew jacocoTestReport
-
-# Package JAR
-./gradlew bootJar
 ```
 
-## Architecture
-
-### Security Module
-The `security/` package contains JWT authentication:
-- `config/SecurityConfig.kt` - Spring Security configuration with JWT filter
-- `utils/JwtUtils.kt` - JWT token generation/validation
-- `filter/JwtAuthorizationFilter.kt` - Request authentication filter
-- `service/` - User and authentication business logic
-- `entity/` - UserEntity, RoleEntity (JPA)
-
-### Database
-- Liquibase migrations in `src/main/resources/db/changelog/`
-- JPA repositories in `security/repository/`
-- H2 for development, PostgreSQL for production
-
-### API Layer
-- Controllers return DTOs from `api/request/` and `api/response/`
-- Global exception handling in `exception/`
-- Swagger UI available at `/swagger-ui/index.html`
-
-### Configuration
-- `application.yml` - Default profile (H2, dev JWT secret)
-- `application-render.yml` - Production profile for Render.com
-- Environment variables: `PORT`, `JWT_SECRET`, `SPRING_PROFILES_ACTIVE`, `DATABASE_URL`, `DATABASE_USERNAME`, `DATABASE_PASSWORD`
-
-### Testing
-- JUnit 5 with Mockito and AssertJ
-- Test factories: `UserFactory.kt`, `RoleFactory.kt`
-- Security tests in `src/test/kotlin/com/renato/springbootstrap/security/`
-
-### Docker
-- Multi-stage Dockerfile uses jlink to create minimal JRE
-- Pre-built images: `ghcr.io/fialhorenato/springbootstrap:latest`
-
-## Development Notes
-
-- JDK 24 is required (set in `system.properties`)
-- Gradle configuration cache is enabled (`gradle.properties`)
-- Actuator runs on port 8081, main app on port 8080
-- Sample HTTP requests in `docs/requests/User.http`
+### Development Notes
+*   JDK 24 is required.
+*   Actuator runs on port 8081; main application on port 8080.
+*   Client endpoints can be tested using sample HTTP requests (e.g., `docs/requests/User.http`).
