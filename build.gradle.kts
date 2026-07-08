@@ -23,7 +23,7 @@ version = "0.1.0"
 val nimbusJose4jVersion = "10.9.1"
 val springDocVersion = "3.0.3"
 val assertjVersion = "3.27.7"
-val fasterxmlJacksonVersion = "2.22.0"
+val fasterxmlJacksonVersion = "2.17.0"
 val toolsJacksonVersion = "3.2.0"
 val jacocoToolVersion = "0.8.13"
 
@@ -39,18 +39,6 @@ java {
 
 repositories {
 	mavenCentral()
-}
-
-dependencyManagement {
-	imports {
-		mavenBom("com.fasterxml.jackson:jackson-bom:$fasterxmlJacksonVersion")
-		mavenBom("tools.jackson:jackson-bom:$toolsJacksonVersion")
-	}
-	dependencies {
-		dependency("ch.qos.logback:logback-core:1.5.36")
-		dependency("ch.qos.logback:logback-classic:1.5.36")
-		dependency("org.apache.tomcat.embed:tomcat-embed-core:11.0.23")
-	}
 }
 
 tasks.jacocoTestReport {
