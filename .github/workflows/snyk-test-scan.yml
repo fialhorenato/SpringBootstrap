@@ -22,4 +22,5 @@ jobs:
       - name: Run Snyk to check for vulnerabilities
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        run: snyk test --file=build.gradle.kts --package-manager=gradle --fail-on=false
+        run: snyk test --file=build.gradle.kts --package-manager=gradle
+        continue-on-error: true
