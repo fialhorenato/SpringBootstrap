@@ -46,6 +46,11 @@ dependencyManagement {
 		mavenBom("com.fasterxml.jackson:jackson-bom:$fasterxmlJacksonVersion")
 		mavenBom("tools.jackson:jackson-bom:$toolsJacksonVersion")
 	}
+	dependencies {
+		dependency("ch.qos.logback:logback-core:1.5.36")
+		dependency("ch.qos.logback:logback-classic:1.5.36")
+		dependency("org.apache.tomcat.embed:tomcat-embed-core:11.0.23")
+	}
 }
 
 tasks.jacocoTestReport {
