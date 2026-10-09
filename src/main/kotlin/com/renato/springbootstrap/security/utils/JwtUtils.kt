@@ -9,7 +9,6 @@ import com.nimbusds.jose.crypto.MACSigner
 import com.nimbusds.jose.crypto.MACVerifier
 import com.nimbusds.jwt.JWTClaimsSet
 import com.renato.springbootstrap.security.domain.UserSecurity
-import com.renato.springbootstrap.security.exception.JwtException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -36,10 +35,13 @@ class JwtUtils {
     lateinit var jwtSecret: String
 
     @Value("\${jwt.jwt-expiration-ms}")
-    var jwtExpirationMs = 86400000
+    var jwtExpirationMs = 86400000L
 
-    fun generateJwtToken(authentication: Authentication): String {
-        val payload = Payload(getClaims(authentication).toJSONObject())
+    @Value("\${jwt.jwt-refresh-expiration-ms}")
+    var jwtRefreshExpirationMs = 604800000L
+
+    fun generateJwtToken(authentication: Authentication, expirationMs: Long = jwtExpirationMs): String {
+        val payload = Payload(getClaims(authentication, expirationMs).toJSONObject())
         val header = JWSHeader(HS256)
         val signer = MACSigner(jwtSecret)
         val jwsObject = JWSObject(header, payload)
@@ -49,14 +51,19 @@ class JwtUtils {
         return jwsObject.serialize()
     }
 
-    private fun getClaims(authentication: Authentication): JWTClaimsSet {
+    fun generateRefreshJwtToken(authentication: Authentication): String {
+        return generateJwtToken(authentication, jwtRefreshExpirationMs)
+    }
+
+    private fun getClaims(authentication: Authentication, expirationMs: Long): JWTClaimsSet {
         val userPrincipal = authentication.principal as UserSecurity
         return JWTClaimsSet.Builder()
             .claim(EMAIL_CLAIM, userPrincipal.email)
             .claim(ROLES_CLAIM, userPrincipal.roles)
             .claim(PASSWORD_CLAIM, userPrincipal.password)
             .claim(USER_ID_CLAIM, userPrincipal.userId)
-            .expirationTime(Date(Date().time + jwtExpirationMs))
+            .jwtID(UUID.randomUUID().toString())
+            .expirationTime(Date(Date().time + expirationMs))
             .issueTime(Date())
             .subject(userPrincipal.username)
             .build()
@@ -111,7 +118,12 @@ class JwtUtils {
     fun validateJwtToken(authToken: String): Boolean {
         return try {
             val verifier = MACVerifier(jwtSecret)
-            JWSObject.parse(authToken).verify(verifier)
+            val jwsObject = JWSObject.parse(authToken)
+            if (!jwsObject.verify(verifier)) {
+                return false
+            }
+            val expiration = JWTClaimsSet.parse(jwsObject.payload.toJSONObject()).expirationTime ?: return false
+            expiration.after(Date())
         } catch (ex: Exception) {
             logger.error("Invalid JWT token: {}", ex.message, ex)
             false

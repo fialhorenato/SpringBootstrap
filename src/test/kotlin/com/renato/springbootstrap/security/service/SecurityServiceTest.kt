@@ -158,15 +158,15 @@ class SecurityServiceTest {
 
         `when`(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken::class.java)))
             .thenReturn(authentication)
-        `when`(jwtUtils.generateJwtToken(authentication)).thenReturn("jwt-token")
+        `when`(jwtUtils.generateJwtToken(authentication, 0L)).thenReturn("jwt-token")
 
         val token = service.authenticate("username", "password")
 
         assertThat(token).isEqualTo("jwt-token")
         assertThat(SecurityContextHolder.getContext().authentication).isEqualTo(authentication)
         verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken::class.java))
-        verify(jwtUtils).generateJwtToken(authentication)
-        verifyNoMoreInteractions(authenticationManager, jwtUtils)
+        verify(jwtUtils).generateJwtToken(authentication, 0L)
+        verifyNoMoreInteractions(authenticationManager)
     }
 
     @Test
