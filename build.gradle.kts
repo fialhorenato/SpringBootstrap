@@ -83,7 +83,7 @@ dependencies {
 	runtimeOnly("com.h2database:h2")
 
 	// PostgreSQL
-	runtimeOnly("org.postgresql:postgresql:42.7.13")
+	runtimeOnly("org.postgresql:postgresql:42.7.14")
 
 	// Prometheus
 	runtimeOnly("io.micrometer:micrometer-registry-prometheus")
