@@ -2,8 +2,11 @@ package com.renato.springbootstrap.security.controller
 
 import com.renato.springbootstrap.factory.UserFactory
 import com.renato.springbootstrap.security.api.request.LoginRequestDTO
+import com.renato.springbootstrap.security.api.request.RefreshTokenRequestDTO
 import com.renato.springbootstrap.security.api.request.SignupRequestDTO
+import com.renato.springbootstrap.security.api.response.AuthTokenResponseDTO
 import com.renato.springbootstrap.security.domain.UserSecurity
+import com.renato.springbootstrap.security.service.AuthTokenService
 import com.renato.springbootstrap.security.service.UserService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -21,6 +24,9 @@ class SecurityControllerTest {
 
     @Mock
     lateinit var userService: UserService
+
+    @Mock
+    lateinit var authTokenService: AuthTokenService
 
     @InjectMocks
     lateinit var securityController: SecurityController
@@ -41,15 +47,33 @@ class SecurityControllerTest {
     }
 
     @Test
-    fun `given_login_request_when_login_is_called_then_service_is_delegated_and_token_is_returned`() {
+    fun `given_login_request_when_login_is_called_then_access_and_refresh_tokens_are_returned`() {
         val request = LoginRequestDTO("username", "password")
+        val response = AuthTokenResponseDTO(token = "jwt-token", refreshToken = "refresh-token")
         `when`(userService.authenticate("username", "password")).thenReturn("jwt-token")
+        `when`(authTokenService.issueFromAccessToken("jwt-token")).thenReturn(response)
 
         val token = securityController.login(request)
 
-        assertThat(token).isEqualTo("jwt-token")
+        assertThat(token.token).isEqualTo("jwt-token")
+        assertThat(token.refreshToken).isEqualTo("refresh-token")
         verify(userService).authenticate("username", "password")
-        verifyNoMoreInteractions(userService)
+        verify(authTokenService).issueFromAccessToken("jwt-token")
+        verifyNoMoreInteractions(userService, authTokenService)
+    }
+
+    @Test
+    fun `given_refresh_request_when_refresh_is_called_then_token_service_is_delegated`() {
+        val request = RefreshTokenRequestDTO("refresh-token")
+        val response = AuthTokenResponseDTO(token = "new-jwt-token", refreshToken = "new-refresh-token")
+        `when`(authTokenService.refresh("refresh-token")).thenReturn(response)
+
+        val token = securityController.refresh(request)
+
+        assertThat(token.token).isEqualTo("new-jwt-token")
+        assertThat(token.refreshToken).isEqualTo("new-refresh-token")
+        verify(authTokenService).refresh("refresh-token")
+        verifyNoMoreInteractions(userService, authTokenService)
     }
 
     @Test

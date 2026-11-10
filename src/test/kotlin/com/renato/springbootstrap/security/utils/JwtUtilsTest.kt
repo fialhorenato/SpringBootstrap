@@ -18,6 +18,7 @@ class JwtUtilsTest {
         jwtUtils = JwtUtils().apply {
             jwtSecret = "0123456789abcdef0123456789abcdef"
             jwtExpirationMs = 86_400_000
+            jwtRefreshExpirationMs = 604_800_000
         }
     }
 
@@ -80,6 +81,23 @@ class JwtUtilsTest {
 
         assertThat(jwtUtils.validateJwtToken(token)).isTrue
         assertThat(jwtUtils.validateJwtToken("not-a-token")).isFalse
+    }
+
+    @Test
+    fun `given_expired_token_when_validate_is_called_then_false_is_returned`() {
+        val principal = UserSecurity(
+            id = 1L,
+            userId = UUID.randomUUID(),
+            username = "username",
+            password = "password",
+            email = "email@example.com",
+            authorities = listOf(SimpleGrantedAuthority("USER")),
+            roles = listOf("USER"),
+        )
+        val authentication = UsernamePasswordAuthenticationToken(principal, "password", principal.authorities)
+        val token = jwtUtils.generateJwtToken(authentication, -1)
+
+        assertThat(jwtUtils.validateJwtToken(token)).isFalse
     }
 
     @Test
